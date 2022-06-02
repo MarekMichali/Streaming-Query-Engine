@@ -1,6 +1,5 @@
 package pl.polsl.hdised.producer.service;
 
-import org.apache.kafka.streams.StreamsBuilder;
 import org.springframework.stereotype.Service;
 import pl.polsl.hdised.producer.model.MessageCreator;
 
@@ -8,9 +7,6 @@ import pl.polsl.hdised.producer.model.MessageCreator;
 public class MessageService {
 
     private MessageCreator messageCreator;
-
-    final StreamsBuilder builder = new StreamsBuilder();
-
 
     public MessageService(MessageCreator messageCreator) {
         this.messageCreator = messageCreator;

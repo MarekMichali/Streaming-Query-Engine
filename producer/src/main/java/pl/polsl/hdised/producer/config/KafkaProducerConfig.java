@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import pl.polsl.hdised.producer.dto.TemperatureDto;
+import pl.polsl.hdised.producer.dto.TemperatureSerializerDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,19 +24,19 @@ public class KafkaProducerConfig {
         Map<String, Object> properties = new HashMap<>();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, TemperatureSerializerDto.class);
         return properties;
     }
 
     // SECOND ARGUMENT IS WHAT WE WANT TO PRODUCE(OBJECT, OUR CLASS etc.)
     @Bean
-    public ProducerFactory<String, String> producerFactory() {
+    public ProducerFactory<String, TemperatureDto> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     // SECOND ARGUMENT IS WHAT WE WANT TO PRODUCE(OBJECT, OUR CLASS etc.) LIKE IN HIGHER METHOD
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> producerFactory) {
+    public KafkaTemplate<String, TemperatureDto> kafkaTemplate(ProducerFactory<String, TemperatureDto> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 
