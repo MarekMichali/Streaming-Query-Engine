@@ -6,6 +6,7 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Map;
 
 @Component

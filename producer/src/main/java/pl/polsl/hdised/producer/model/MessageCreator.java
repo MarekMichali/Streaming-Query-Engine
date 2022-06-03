@@ -28,8 +28,11 @@ public class MessageCreator {
     public void StartProducingMessages() throws InterruptedException {
         while (true) {
             if (this.produce.get()) {
-                TemperatureDto temperature = new TemperatureDto((new Random().nextFloat(-30.0f, 30.0f)), "Celsius degrees");
-                temperatureKafkaTemplate.send("topic", temperature);
+                TemperatureDto temperatureDto = new TemperatureDto((new Random().nextFloat(-30.0f, 30.0f)), "Celsius degrees");
+                System.out.println(temperatureDto.getUnit());
+                System.out.println(temperatureDto.getTemperature());
+                System.out.println("----------------------------");
+                temperatureKafkaTemplate.send("topic", temperatureDto);
                 Thread.sleep(500);
             } else {
                 break;

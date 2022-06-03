@@ -12,4 +12,12 @@ public class TemperatureDto {
     public String getUnit() {
         return unit;
     }
+
+    public void setTemperature(Float temperature) {
+        this.temperature = temperature;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
 }
