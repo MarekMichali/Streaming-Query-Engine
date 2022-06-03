@@ -1,7 +1,12 @@
 package pl.polsl.hdised.consumer.dto;
 
+import java.util.Date;
+
 public class TemperatureDto {
 
+    private String cityName;
+    private Date date;
+    private String deviceId;
     private Float temperature;
     private String unit;
 
@@ -13,11 +18,15 @@ public class TemperatureDto {
         return unit;
     }
 
-    public void setTemperature(Float temperature) {
-        this.temperature = temperature;
+    public String getCityName() {
+        return cityName;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public Date getDate() {
+        return date;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
     }
 }

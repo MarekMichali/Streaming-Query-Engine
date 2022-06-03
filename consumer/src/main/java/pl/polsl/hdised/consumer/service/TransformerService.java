@@ -6,7 +6,7 @@ import pl.polsl.hdised.consumer.dto.TemperatureDto;
 @Service
 public class TransformerService {
 
-    public TemperatureDto transformToKelvinsAndAddToDb(TemperatureDto temperatureDto) {
+   /* public TemperatureDto transformToKelvinsAndAddToDb(TemperatureDto temperatureDto) {
         if (temperatureDto.getUnit().equals("kelvin")) {
             return temperatureDto;
         }
@@ -15,5 +15,5 @@ public class TransformerService {
 
         return temperatureDto;
     }
-
+*/
 }

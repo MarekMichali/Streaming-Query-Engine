@@ -8,6 +8,19 @@ public class Temperature {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "device_id")
+    private Device device;
+
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
+
+    @ManyToOne
+    @JoinColumn(name = "scan_date_id")
+    private ScanDate scanDate;
+
     @Column(name = "unit", nullable = false, columnDefinition = "TEXT")
     private String unit;
     @Column(name = "temperature", nullable = false)
@@ -16,32 +29,11 @@ public class Temperature {
     public Temperature() {
     }
 
-    public Temperature(String unit, Float temperature) {
+    public Temperature(Device device, Location location, ScanDate scanDate, String unit, Float temperature) {
+        this.device = device;
+        this.location = location;
+        this.scanDate = scanDate;
         this.unit = unit;
-        this.temperature = temperature;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public Float getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(Float temperature) {
         this.temperature = temperature;
     }
 }

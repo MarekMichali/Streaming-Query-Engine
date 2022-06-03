@@ -25,15 +25,15 @@ public class KafkaConsumerConfig {
     public Map<String, Object> consumerConfig() {
         Map<String, Object> properties = new HashMap<>();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, TemperatureDtoDeserializer.class);
+       // properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        //properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, TemperatureDtoDeserializer.class);
         return properties;
     }
 
     // SECOND ARGUMENT IS WHAT WE WANT TO PRODUCE(OBJECT, OUR CLASS etc.)
     @Bean
     public ConsumerFactory<String, TemperatureDto> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfig());
+        return new DefaultKafkaConsumerFactory<>(consumerConfig(), new StringDeserializer(), new TemperatureDtoDeserializer());
     }
 
     // SECOND ARGUMENT IS WHAT WE WANT TO PRODUCE(OBJECT, OUR CLASS etc.)

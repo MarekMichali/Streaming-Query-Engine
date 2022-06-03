@@ -10,5 +10,8 @@
         <module name="consumer" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="product-producer" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
