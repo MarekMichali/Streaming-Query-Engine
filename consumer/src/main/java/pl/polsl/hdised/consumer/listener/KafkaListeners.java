@@ -1,5 +1,6 @@
 package pl.polsl.hdised.consumer.listener;
 
+import org.springframework.data.domain.Example;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import pl.polsl.hdised.consumer.dto.TemperatureDto;
@@ -42,11 +43,17 @@ public class KafkaListeners {
         System.out.println(temperatureDto.getTemperature());
         System.out.println("----------------------------");
 
-        Device device = new Device(temperatureDto.getDeviceId());
-        this.deviceRepository.save(device);
+        Device device = deviceRepository.findDeviceById(temperatureDto.getDeviceId());
+        if(device == null){
+            device = new Device(temperatureDto.getDeviceId());
+            this.deviceRepository.save(device);
+        }
 
-        Location location = new Location(temperatureDto.getCityName());
-        this.locationRepository.save(location);
+        Location location = this.locationRepository.findLocationByCity(temperatureDto.getCityName());
+        if(location == null){
+            location = new Location(temperatureDto.getCityName());
+            this.locationRepository.save(location);
+        }
 
         ScanDate scanDate = new ScanDate(temperatureDto.getDate());
         this.scanDateRepository.save(scanDate);
