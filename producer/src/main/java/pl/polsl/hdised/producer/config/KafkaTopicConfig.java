@@ -15,7 +15,7 @@ public class KafkaTopicConfig {
     }
 
     @Bean
-    public NewTopic productTopic(){
-        return TopicBuilder.name("productTopic").build();
+    public NewTopic streamTopic(){
+        return TopicBuilder.name("streamTopic").build();
     }
 }

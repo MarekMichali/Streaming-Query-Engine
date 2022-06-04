@@ -1,7 +1,6 @@
 package pl.polsl.hdised.producer.measurement;
 
 import org.springframework.stereotype.Service;
-import pl.polsl.hdised.producer.measurement.MeasurementCreator;
 
 @Service
 public class MeasurementService {
@@ -12,11 +11,11 @@ public class MeasurementService {
         this.measurementCreator = measurementCreator;
     }
 
-    public void startProducing() {
+    public void startProducingToDatabase() {
         this.measurementCreator.setProduce(true);
         Thread thread = new Thread(() -> {
             try {
-                this.measurementCreator.StartProducingMessages();
+                this.measurementCreator.StartProducingMeasurementsToDatabase();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

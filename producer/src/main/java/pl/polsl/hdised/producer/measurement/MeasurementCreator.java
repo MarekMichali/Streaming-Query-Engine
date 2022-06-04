@@ -13,11 +13,11 @@ public class MeasurementCreator {
     private AtomicBoolean produce;
 
     // IF WE WANT TO WORK WITH DIFFERENT CLASS THAN STRING WE NEED TO CHANGE THIS SECOND ARGUMENT
-    private KafkaTemplate<String, MeasurementDto> temperatureKafkaTemplate;
+    private KafkaTemplate<String, MeasurementDto> measurementKafkaTemplate;
 
 
-    public MeasurementCreator(KafkaTemplate<String, MeasurementDto> temperatureKafkaTemplate) {
-        this.temperatureKafkaTemplate = temperatureKafkaTemplate;
+    public MeasurementCreator(KafkaTemplate<String, MeasurementDto> measurementKafkaTemplate) {
+        this.measurementKafkaTemplate = measurementKafkaTemplate;
         this.produce = new AtomicBoolean(true);
     }
 
@@ -25,17 +25,17 @@ public class MeasurementCreator {
         this.produce.set(produce);
     }
 
-    public void StartProducingMessages() throws InterruptedException {
+    public void StartProducingMeasurementsToDatabase() throws InterruptedException {
         while (true) {
             if (this.produce.get()) {
-                MeasurementDto measurementDto = createMessage();
+                MeasurementDto measurementDto = createMeasurement();
                 System.out.println(measurementDto.getCityName());
                 System.out.println(measurementDto.getDeviceId());
                 System.out.println(measurementDto.getDate());
                 System.out.println(measurementDto.getUnit());
                 System.out.println(measurementDto.getTemperature());
                 System.out.println("----------------------------");
-                temperatureKafkaTemplate.send("topic", measurementDto);
+                measurementKafkaTemplate.send("topic", measurementDto);
                 Thread.sleep(500);
             } else {
                 break;
@@ -43,7 +43,7 @@ public class MeasurementCreator {
         }
     }
 
-    private MeasurementDto createMessage(){
+    private MeasurementDto createMeasurement(){
         String city;
         switch(new Random().nextInt(0, 3)){
             case 0 -> city = "Gliwice";

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/v1/messages")
+@RequestMapping("api/v1/measurements")
 public class MeasurementController {
 
     private MeasurementService measurementService;
@@ -20,9 +20,9 @@ public class MeasurementController {
         return "Producing stopped";
     }
 
-    @PostMapping("/start-producing")
-    public String startProducing() throws InterruptedException {
-        this.measurementService.startProducing();
+    @PostMapping("/start-producing-to-database")
+    public String startProducingToDatabase() {
+        this.measurementService.startProducingToDatabase();
         return "Producing started";
     }
 

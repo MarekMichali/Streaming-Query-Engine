@@ -11,20 +11,20 @@ import pl.polsl.hdised.consumer.device.DeviceRepository;
 import pl.polsl.hdised.consumer.location.LocationRepository;
 import pl.polsl.hdised.consumer.date.DateRepository;
 import pl.polsl.hdised.consumer.measurement.MeasurementRepository;
-import pl.polsl.hdised.consumer.service.TransformerService;
+import pl.polsl.hdised.consumer.query.QueryService;
 
 
 @Component
 public class KafkaListeners {
 
-    private TransformerService transformerService;
+    private QueryService queryService;
     private MeasurementRepository measurementRepository;
     private DeviceRepository deviceRepository;
     private LocationRepository locationRepository;
     private DateRepository dateRepository;
 
-    public KafkaListeners(TransformerService transformerService, MeasurementRepository measurementRepository, DeviceRepository deviceRepository, LocationRepository locationRepository, DateRepository dateRepository) {
-        this.transformerService = transformerService;
+    public KafkaListeners(QueryService queryService, MeasurementRepository measurementRepository, DeviceRepository deviceRepository, LocationRepository locationRepository, DateRepository dateRepository) {
+        this.queryService = queryService;
         this.measurementRepository = measurementRepository;
         this.deviceRepository = deviceRepository;
         this.locationRepository = locationRepository;
