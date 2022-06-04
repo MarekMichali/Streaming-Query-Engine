@@ -1,2 +1,3 @@
 
 consumer/target/classes/application.properties
+consumer/src/main/resources/application.properties
