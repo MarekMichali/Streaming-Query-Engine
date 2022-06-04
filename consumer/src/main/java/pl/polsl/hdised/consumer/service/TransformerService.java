@@ -1,7 +1,6 @@
 package pl.polsl.hdised.consumer.service;
 
 import org.springframework.stereotype.Service;
-import pl.polsl.hdised.consumer.dto.TemperatureDto;
 
 @Service
 public class TransformerService {

@@ -10,8 +10,8 @@ import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import pl.polsl.hdised.consumer.dto.TemperatureDto;
-import pl.polsl.hdised.consumer.dto.TemperatureDtoDeserializer;
+import pl.polsl.hdised.consumer.measurement.MeasurementDto;
+import pl.polsl.hdised.consumer.measurement.MeasurementDtoDeserializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,22 +25,19 @@ public class KafkaConsumerConfig {
     public Map<String, Object> consumerConfig() {
         Map<String, Object> properties = new HashMap<>();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-       // properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        //properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, TemperatureDtoDeserializer.class);
         return properties;
     }
 
     // SECOND ARGUMENT IS WHAT WE WANT TO PRODUCE(OBJECT, OUR CLASS etc.)
     @Bean
-    public ConsumerFactory<String, TemperatureDto> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfig(), new StringDeserializer(), new TemperatureDtoDeserializer());
+    public ConsumerFactory<String, MeasurementDto> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfig(), new StringDeserializer(), new MeasurementDtoDeserializer());
     }
 
     // SECOND ARGUMENT IS WHAT WE WANT TO PRODUCE(OBJECT, OUR CLASS etc.)
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, TemperatureDto>> kafkaListenerContainerFactory(
-            ConsumerFactory<String, TemperatureDto> consumerFactory) {
-        ConcurrentKafkaListenerContainerFactory<String, TemperatureDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, MeasurementDto>> kafkaListenerContainerFactory(ConsumerFactory<String, MeasurementDto> consumerFactory) {
+        ConcurrentKafkaListenerContainerFactory<String, MeasurementDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         return factory;
     }
