@@ -2,8 +2,8 @@ package pl.polsl.hdised.consumer.averageresponse;
 
 public class AverageResponseDto {
 
-    private Float averageTemperature;
-    private Integer temperaturesCount;
+    private final Float averageTemperature;
+    private final Integer temperaturesCount;
 
     public AverageResponseDto(Float averageTemperature, Integer temperaturesCount) {
         this.averageTemperature = averageTemperature;

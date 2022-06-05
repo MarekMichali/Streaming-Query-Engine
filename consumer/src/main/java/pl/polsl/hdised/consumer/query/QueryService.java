@@ -3,7 +3,6 @@ package pl.polsl.hdised.consumer.query;
 
 import org.springframework.stereotype.Service;
 import pl.polsl.hdised.consumer.averageresponse.AverageResponseDto;
-import pl.polsl.hdised.consumer.date.DateRepository;
 import pl.polsl.hdised.consumer.device.DeviceRepository;
 import pl.polsl.hdised.consumer.exception.ParametersNotFoundException;
 import pl.polsl.hdised.consumer.location.LocationRepository;
@@ -20,16 +19,14 @@ import java.util.Objects;
 @Service
 public class QueryService {
 
-    private MeasurementRepository measurementRepository;
-    private DeviceRepository deviceRepository;
-    private LocationRepository locationRepository;
-    private DateRepository dateRepository;
+    private final MeasurementRepository measurementRepository;
+    private final DeviceRepository deviceRepository;
+    private final LocationRepository locationRepository;
 
-    public QueryService(MeasurementRepository measurementRepository, DeviceRepository deviceRepository, LocationRepository locationRepository, DateRepository dateRepository) {
+    public QueryService(MeasurementRepository measurementRepository, DeviceRepository deviceRepository, LocationRepository locationRepository) {
         this.measurementRepository = measurementRepository;
         this.deviceRepository = deviceRepository;
         this.locationRepository = locationRepository;
-        this.dateRepository = dateRepository;
     }
 
     public AverageResponseDto getHistoricalAverage(String deviceId, String location, String stringDate) throws ParseException, ParametersNotFoundException {

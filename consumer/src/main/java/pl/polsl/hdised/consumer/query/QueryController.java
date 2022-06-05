@@ -11,7 +11,7 @@ import java.text.ParseException;
 @RestController
 public class QueryController {
 
-    private QueryService queryService;
+    private final QueryService queryService;
 
     public QueryController(QueryService queryService) {
         this.queryService = queryService;

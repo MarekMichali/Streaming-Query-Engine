@@ -12,7 +12,7 @@ public class MeasurementController {
     private final String TOPIC = "topic";
     private final String STREAM_TOPIC = "streamTopic";
 
-    private MeasurementService measurementService;
+    private final MeasurementService measurementService;
 
     public MeasurementController(MeasurementService measurementService) {
         this.measurementService = measurementService;

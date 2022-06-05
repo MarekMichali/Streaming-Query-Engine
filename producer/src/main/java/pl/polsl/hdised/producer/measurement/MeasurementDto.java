@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class MeasurementDto {
 
-    private String cityName;
-    private Date date;
-    private String deviceId;
-    private Float temperature;
-    private String unit;
+    private final String cityName;
+    private final Date date;
+    private final String deviceId;
+    private final Float temperature;
+    private final String unit;
 
     public MeasurementDto(String cityName, Date date, String deviceId, Float temperature, String unit) {
         this.cityName = cityName;

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MeasurementService {
 
-    private MeasurementCreator measurementCreator;
+    private final MeasurementCreator measurementCreator;
 
     public MeasurementService(MeasurementCreator measurementCreator) {
         this.measurementCreator = measurementCreator;
