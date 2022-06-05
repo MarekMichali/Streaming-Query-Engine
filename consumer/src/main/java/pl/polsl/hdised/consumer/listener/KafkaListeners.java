@@ -11,6 +11,7 @@ import pl.polsl.hdised.consumer.location.LocationRepository;
 import pl.polsl.hdised.consumer.measurement.MeasurementDto;
 import pl.polsl.hdised.consumer.measurement.MeasurementEntity;
 import pl.polsl.hdised.consumer.measurement.MeasurementRepository;
+import pl.polsl.hdised.consumer.query.Query;
 import pl.polsl.hdised.consumer.query.QueryService;
 
 
@@ -58,7 +59,14 @@ public class KafkaListeners {
 
     @KafkaListener(topics = "streamTopic", groupId = "hdised", containerFactory = "kafkaListenerContainerFactory")
     void streamListener(MeasurementDto measurementDto) {
-        printMeasurement(measurementDto);
+        if (areParametersEqual(measurementDto)) {
+            System.out.println("Parameters are equal, adding to Average...");
+            Query.getInstance().appendMeasurement(measurementDto.getTemperature());
+        }
+    }
+
+    private boolean areParametersEqual(MeasurementDto measurementDto) {
+        return measurementDto.getCityName().equals(Query.getInstance().getLocation()) && measurementDto.getDeviceId().equals(Query.getInstance().getDeviceId());
     }
 
     private synchronized void printMeasurement(MeasurementDto measurementDto) {
