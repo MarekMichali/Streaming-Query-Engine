@@ -25,7 +25,7 @@ public class MeasurementCreator {
         this.produce.set(produce);
     }
 
-    public void StartProducingMeasurementsToDatabase() throws InterruptedException {
+    public void StartProducingMeasurementsToDatabase(String topic) throws InterruptedException {
         while (true) {
             if (this.produce.get()) {
                 MeasurementDto measurementDto = createMeasurement();
@@ -35,7 +35,7 @@ public class MeasurementCreator {
                 System.out.println(measurementDto.getUnit());
                 System.out.println(measurementDto.getTemperature());
                 System.out.println("----------------------------");
-                measurementKafkaTemplate.send("topic", measurementDto);
+                measurementKafkaTemplate.send(topic, measurementDto);
                 Thread.sleep(500);
             } else {
                 break;

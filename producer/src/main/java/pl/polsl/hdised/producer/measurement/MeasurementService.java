@@ -11,11 +11,11 @@ public class MeasurementService {
         this.measurementCreator = measurementCreator;
     }
 
-    public void startProducingToDatabase() {
+    public void startProducing(String topic) {
         this.measurementCreator.setProduce(true);
         Thread thread = new Thread(() -> {
             try {
-                this.measurementCreator.StartProducingMeasurementsToDatabase();
+                this.measurementCreator.StartProducingMeasurementsToDatabase(topic);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -4,9 +4,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 @RequestMapping("api/v1/measurements")
 public class MeasurementController {
+
+    private final String TOPIC = "topic";
+    private final String STREAM_TOPIC = "streamTopic";
 
     private MeasurementService measurementService;
 
@@ -22,7 +26,13 @@ public class MeasurementController {
 
     @PostMapping("/start-producing-to-database")
     public String startProducingToDatabase() {
-        this.measurementService.startProducingToDatabase();
+        this.measurementService.startProducing(TOPIC);
+        return "Producing started";
+    }
+
+    @PostMapping("/start-stream-producing")
+    public String startStreamProducing() {
+        this.measurementService.startProducing(STREAM_TOPIC);
         return "Producing started";
     }
 
