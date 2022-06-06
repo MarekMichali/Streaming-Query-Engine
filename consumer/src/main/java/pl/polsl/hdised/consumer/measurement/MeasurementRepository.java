@@ -17,6 +17,6 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
             "WHERE \n" +
             "device.device_id = :deviceId AND\n" +
             "location.city = :location AND\n" +
-            "date.scan_date = :date", nativeQuery = true)
-    Tuple getAverage(@Param("deviceId") String deviceId, @Param("location") String location, @Param("date") Date date);
+            "date.scan_date BETWEEN :startDate AND :finishDate", nativeQuery = true)
+    Tuple getAverageAndCount(@Param("deviceId") String deviceId, @Param("location") String location, @Param("startDate") Date startDate, @Param("finishDate") Date finishDate);
 }

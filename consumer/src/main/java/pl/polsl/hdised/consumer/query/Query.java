@@ -10,12 +10,10 @@ public final class Query {
 
     private String location;
     private String deviceId;
-    private Date date;
     private Float temperaturesSum;
     private Integer temperaturesCount;
 
     private Query() {
-        this.date = Calendar.getInstance().getTime();
         this.location = "";
         this.deviceId = "";
         this.temperaturesCount = 0;
@@ -52,16 +50,12 @@ public final class Query {
         return deviceId;
     }
 
-    public Date getDate() {
-        return date;
-    }
 
-    public void setParameters(String location, String deviceId, Date date) {
+    public void setParameters(String location, String deviceId) {
         this.temperaturesSum = 0.0f;
         this.temperaturesCount = 0;
         this.location = location;
         this.deviceId = deviceId;
-        this.date = date;
     }
 
     public void appendMeasurement(Float temperature) {

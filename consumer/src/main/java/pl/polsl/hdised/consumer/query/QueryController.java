@@ -18,13 +18,13 @@ public class QueryController {
     }
 
     @GetMapping
-    public AverageResponseDto getHistoricalAverage(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("stringDate") String stringDate) throws ParseException, ParametersNotFoundException {
-        return this.queryService.getHistoricalAverage(deviceId, location, stringDate);
+    public AverageResponseDto getHistoricalAverage(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException, ParametersNotFoundException {
+        return this.queryService.getHistoricalAverage(deviceId, location, stringStartDate, stringFinishDate);
     }
 
     @PostMapping("/set-query-parameters")
-    public String setQueryParameters(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("stringDate") String stringDate) throws ParseException, ParametersNotFoundException {
-        this.queryService.setQueryParameters(deviceId, location, stringDate);
+    public String setQueryParameters(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location) throws ParametersNotFoundException {
+        this.queryService.setQueryParameters(deviceId, location);
 
         return "Parameters set successfully";
     }
