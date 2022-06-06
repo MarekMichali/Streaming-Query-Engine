@@ -19,4 +19,8 @@ public class LocationEntity {
     public LocationEntity(String city) {
         this.city = city;
     }
+
+    public String getCity() {
+        return city;
+    }
 }

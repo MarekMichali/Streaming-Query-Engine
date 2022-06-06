@@ -9,6 +9,7 @@ import pl.polsl.hdised.consumer.device.DeviceDto;
 import pl.polsl.hdised.consumer.device.DeviceEntity;
 import pl.polsl.hdised.consumer.device.DeviceRepository;
 import pl.polsl.hdised.consumer.exception.ParametersNotFoundException;
+import pl.polsl.hdised.consumer.location.LocationDto;
 import pl.polsl.hdised.consumer.location.LocationEntity;
 import pl.polsl.hdised.consumer.location.LocationRepository;
 import pl.polsl.hdised.consumer.measurement.MeasurementDto;
@@ -74,8 +75,18 @@ public class QueryService {
         deviceEntities.forEach(de -> {
             deviceDtos.add(new DeviceDto(de.getDeviceId()));
         });
-        System.out.println(deviceDtos);
+
         return deviceDtos;
+    }
+
+    public List<LocationDto> getLocations() {
+        List<LocationDto> locationDtos = new ArrayList<>();
+        List<LocationEntity> locationEntities = this.locationRepository.findAll();
+        locationEntities.forEach(le -> {
+            locationDtos.add(new LocationDto(le.getCity()));
+        });
+
+        return locationDtos;
     }
 
     public void UpdateQuery(MeasurementDto measurementDto) {

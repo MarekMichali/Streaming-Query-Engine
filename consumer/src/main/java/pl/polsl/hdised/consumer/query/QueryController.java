@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import pl.polsl.hdised.consumer.averageresponse.AverageResponseDto;
 import pl.polsl.hdised.consumer.device.DeviceDto;
 import pl.polsl.hdised.consumer.exception.ParametersNotFoundException;
+import pl.polsl.hdised.consumer.location.LocationDto;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("api/v1/query")
@@ -43,9 +43,8 @@ public class QueryController {
     }
 
     @GetMapping("/locations")
-    public void getLocations() {
-
-        //TODO CREATE GET LOCATIONS METHOD AND LOCATION DTO
+    public List<LocationDto> getLocations() {
+        return this.queryService.getLocations();
     }
 
     @ExceptionHandler(ParseException.class)
