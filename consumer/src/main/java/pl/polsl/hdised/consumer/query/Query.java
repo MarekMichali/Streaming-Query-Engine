@@ -1,7 +1,5 @@
 package pl.polsl.hdised.consumer.query;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Objects;
 
 public final class Query {
@@ -14,10 +12,10 @@ public final class Query {
     private Integer temperaturesCount;
 
     private Query() {
+        this.temperaturesSum = 0.0f;
+        this.temperaturesCount = 0;
         this.location = "";
         this.deviceId = "";
-        this.temperaturesCount = 0;
-        this.temperaturesSum = 0.0f;
     }
 
     public static Query getInstance() {
@@ -49,7 +47,6 @@ public final class Query {
     public String getDeviceId() {
         return deviceId;
     }
-
 
     public void setParameters(String location, String deviceId) {
         this.temperaturesSum = 0.0f;

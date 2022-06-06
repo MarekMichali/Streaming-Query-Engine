@@ -8,6 +8,7 @@ import pl.polsl.hdised.consumer.date.DateRepository;
 import pl.polsl.hdised.consumer.device.DeviceDto;
 import pl.polsl.hdised.consumer.device.DeviceEntity;
 import pl.polsl.hdised.consumer.device.DeviceRepository;
+import pl.polsl.hdised.consumer.exception.EmptyMeasurementsException;
 import pl.polsl.hdised.consumer.exception.ParametersNotFoundException;
 import pl.polsl.hdised.consumer.location.LocationDto;
 import pl.polsl.hdised.consumer.location.LocationEntity;
@@ -30,12 +31,14 @@ public class QueryService {
     private final LocationRepository locationRepository;
     private final DateRepository dateRepository;
 
+
     public QueryService(MeasurementRepository measurementRepository, DeviceRepository deviceRepository, LocationRepository locationRepository, DateRepository dateRepository) {
         this.measurementRepository = measurementRepository;
         this.deviceRepository = deviceRepository;
         this.locationRepository = locationRepository;
         this.dateRepository = dateRepository;
     }
+
 
     public AverageResponseDto getHistoricalAverage(String deviceId, String location, String stringStartDate, String stringFinishDate) throws ParseException, ParametersNotFoundException {
         if (!parametersExists(deviceId, location)) {
@@ -53,19 +56,15 @@ public class QueryService {
         return new AverageResponseDto(avgTemp.floatValue(), tempsCount.intValue());
     }
 
-    public void setQueryParameters(String deviceId, String location) throws ParametersNotFoundException {
-        if (!parametersExists(deviceId, location)) {
-            throw new ParametersNotFoundException();
-        }
-
-
-        Query query = Query.getInstance();
-        query.setParameters(Objects.requireNonNull(location, "location cannot be null"), Objects.requireNonNull(deviceId, "device id cannot be null"));
+    private boolean areParametersEqualToQuery(MeasurementDto measurementDto) {
+        return measurementDto.getCityName().equals(Query.getInstance().getLocation()) && measurementDto.getDeviceId().equals(Query.getInstance().getDeviceId());
     }
 
-    public Float getStreamAverage() {
+    public Float getStreamAverage() throws EmptyMeasurementsException {
         Query query = Query.getInstance();
-
+        if (Objects.equals(query.getTemperaturesCount(), 0)) {
+            throw new EmptyMeasurementsException();
+        }
         return query.getTemperaturesSum() / query.getTemperaturesCount();
     }
 
@@ -89,15 +88,25 @@ public class QueryService {
         return locationDtos;
     }
 
+    public void setQueryParameters(String deviceId, String location) throws ParametersNotFoundException {
+        if (!parametersExists(deviceId, location)) {
+            throw new ParametersNotFoundException();
+        }
+
+
+        Query query = Query.getInstance();
+        query.setParameters(Objects.requireNonNull(location, "location cannot be null"), Objects.requireNonNull(deviceId, "device id cannot be null"));
+    }
+
+    private Boolean parametersExists(String deviceId, String location) {
+        return this.deviceRepository.findDeviceById(deviceId) != null && this.locationRepository.findLocationByCity(location) != null;
+    }
+
     public void UpdateQuery(MeasurementDto measurementDto) {
-        if (areParametersEqual(measurementDto)) {
+        if (areParametersEqualToQuery(measurementDto)) {
             System.out.println("Parameters are equal, adding to Average...");
             Query.getInstance().appendMeasurement(measurementDto.getTemperature());
         }
-    }
-
-    private boolean areParametersEqual(MeasurementDto measurementDto) {
-        return measurementDto.getCityName().equals(Query.getInstance().getLocation()) && measurementDto.getDeviceId().equals(Query.getInstance().getDeviceId());
     }
 
     public void addMeasurement(MeasurementDto measurementDto) {
@@ -138,17 +147,13 @@ public class QueryService {
         return dateEntity;
     }
 
-    private synchronized void printMeasurement(MeasurementDto measurementDto) {
+    private void printMeasurement(MeasurementDto measurementDto) {
         System.out.println(measurementDto.getCityName());
         System.out.println(measurementDto.getDeviceId());
         System.out.println(measurementDto.getDate());
         System.out.println(measurementDto.getUnit());
         System.out.println(measurementDto.getTemperature());
         System.out.println("----------------------------");
-    }
-
-    private Boolean parametersExists(String deviceId, String location) {
-        return this.deviceRepository.findDeviceById(deviceId) != null && this.locationRepository.findLocationByCity(location) != null;
     }
 
 }

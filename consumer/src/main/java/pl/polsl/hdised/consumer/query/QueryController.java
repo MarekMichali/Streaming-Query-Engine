@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.polsl.hdised.consumer.averageresponse.AverageResponseDto;
 import pl.polsl.hdised.consumer.device.DeviceDto;
 import pl.polsl.hdised.consumer.exception.ParametersNotFoundException;
+import pl.polsl.hdised.consumer.exception.EmptyMeasurementsException;
 import pl.polsl.hdised.consumer.location.LocationDto;
 
 import java.text.ParseException;
@@ -20,6 +21,7 @@ public class QueryController {
         this.queryService = queryService;
     }
 
+
     @GetMapping
     public AverageResponseDto getHistoricalAverage(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException, ParametersNotFoundException {
         return this.queryService.getHistoricalAverage(deviceId, location, stringStartDate, stringFinishDate);
@@ -33,7 +35,7 @@ public class QueryController {
     }
 
     @GetMapping("/get-average")
-    public Float getStreamAverage() {
+    public Float getStreamAverage() throws EmptyMeasurementsException {
         return this.queryService.getStreamAverage();
     }
 
@@ -46,6 +48,7 @@ public class QueryController {
     public List<LocationDto> getLocations() {
         return this.queryService.getLocations();
     }
+
 
     @ExceptionHandler(ParseException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -63,5 +66,11 @@ public class QueryController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     String handleException(ParametersNotFoundException parametersNotFoundException) {
         return parametersNotFoundException.getMessage();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String handleException(EmptyMeasurementsException emptyMeasurementsException) {
+        return emptyMeasurementsException.getMessage();
     }
 }
