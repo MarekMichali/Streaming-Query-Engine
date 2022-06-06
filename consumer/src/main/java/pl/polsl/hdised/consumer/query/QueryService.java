@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.polsl.hdised.consumer.averageresponse.AverageResponseDto;
 import pl.polsl.hdised.consumer.date.DateEntity;
 import pl.polsl.hdised.consumer.date.DateRepository;
+import pl.polsl.hdised.consumer.device.DeviceDto;
 import pl.polsl.hdised.consumer.device.DeviceEntity;
 import pl.polsl.hdised.consumer.device.DeviceRepository;
 import pl.polsl.hdised.consumer.exception.ParametersNotFoundException;
@@ -18,9 +19,7 @@ import javax.persistence.Tuple;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class QueryService {
@@ -69,7 +68,17 @@ public class QueryService {
         return query.getTemperaturesSum() / query.getTemperaturesCount();
     }
 
-    public void UpdateQuery(MeasurementDto measurementDto){
+    public List<DeviceDto> getDevices() {
+        List<DeviceDto> deviceDtos = new ArrayList<>();
+        List<DeviceEntity> deviceEntities = this.deviceRepository.findAll();
+        deviceEntities.forEach(de -> {
+            deviceDtos.add(new DeviceDto(de.getDeviceId()));
+        });
+        System.out.println(deviceDtos);
+        return deviceDtos;
+    }
+
+    public void UpdateQuery(MeasurementDto measurementDto) {
         if (areParametersEqual(measurementDto)) {
             System.out.println("Parameters are equal, adding to Average...");
             Query.getInstance().appendMeasurement(measurementDto.getTemperature());

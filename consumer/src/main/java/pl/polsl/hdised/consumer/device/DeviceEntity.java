@@ -19,4 +19,8 @@ public class DeviceEntity {
     public DeviceEntity(String deviceId) {
         this.deviceId = deviceId;
     }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
 }

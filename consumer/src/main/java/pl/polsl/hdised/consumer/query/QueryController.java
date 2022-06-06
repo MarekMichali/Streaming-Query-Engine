@@ -3,9 +3,12 @@ package pl.polsl.hdised.consumer.query;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.polsl.hdised.consumer.averageresponse.AverageResponseDto;
+import pl.polsl.hdised.consumer.device.DeviceDto;
 import pl.polsl.hdised.consumer.exception.ParametersNotFoundException;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequestMapping("api/v1/query")
 @RestController
@@ -34,9 +37,20 @@ public class QueryController {
         return this.queryService.getStreamAverage();
     }
 
+    @GetMapping("/devices")
+    public List<DeviceDto> getDevices() {
+        return this.queryService.getDevices();
+    }
+
+    @GetMapping("/locations")
+    public void getLocations() {
+
+        //TODO CREATE GET LOCATIONS METHOD AND LOCATION DTO
+    }
+
     @ExceptionHandler(ParseException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    String handleException(ParseException parseException) {
+    String handleException() {
         return "Provided date format is invalid";
     }
 
