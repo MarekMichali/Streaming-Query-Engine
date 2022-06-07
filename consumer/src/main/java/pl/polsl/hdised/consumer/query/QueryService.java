@@ -47,9 +47,12 @@ public class QueryService {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.ENGLISH);
         Date startDate = format.parse(stringStartDate + ":00.000");
-        Date finsishDate = format.parse(stringFinishDate + ":00.000");
+        Date finishDate = format.parse(stringFinishDate + ":00.000");
 
-        Tuple tuple = this.measurementRepository.getAverageAndCount(Objects.requireNonNull(deviceId, "device id cannot be null"), Objects.requireNonNull(location, "location cannot be null"), Objects.requireNonNull(startDate, "date cannot be null"), Objects.requireNonNull(finsishDate, "date cannot be null"));
+        Tuple tuple = this.measurementRepository.getAverageAndCount(Objects.requireNonNull(deviceId, "device id cannot be null"),
+                Objects.requireNonNull(location, "location cannot be null"),
+                Objects.requireNonNull(startDate, "date cannot be null"),
+                Objects.requireNonNull(finishDate, "date cannot be null"));
 
         Double avgTemp = (Double) tuple.get("averageTemperature");
         BigInteger tempsCount = (BigInteger) tuple.get("temperaturesCount");
@@ -57,7 +60,8 @@ public class QueryService {
     }
 
     private boolean areParametersEqualToQuery(MeasurementDto measurementDto) {
-        return measurementDto.getCityName().equals(Query.getInstance().getLocation()) && measurementDto.getDeviceId().equals(Query.getInstance().getDeviceId());
+        return measurementDto.getCityName().equals(Query.getInstance().getLocation()) &&
+                measurementDto.getDeviceId().equals(Query.getInstance().getDeviceId());
     }
 
     public Float getStreamAverage() throws EmptyMeasurementsException {
@@ -99,7 +103,8 @@ public class QueryService {
     }
 
     private Boolean parametersExists(String deviceId, String location) {
-        return this.deviceRepository.findDeviceById(deviceId) != null && this.locationRepository.findLocationByCity(location) != null;
+        return !Objects.isNull(this.deviceRepository.findDeviceById(deviceId)) &&
+                !Objects.isNull(this.locationRepository.findLocationByCity(location));
     }
 
     public void UpdateQuery(MeasurementDto measurementDto) {
