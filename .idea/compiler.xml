@@ -13,7 +13,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="consumer" target="17" />
-      <module name="GUI" target="18" />
+      <module name="GUI" target="17" />
       <module name="producer" target="17" />
       <module name="product-producer" target="17" />
       <module name="Stream-Query-Engine" target="17" />
