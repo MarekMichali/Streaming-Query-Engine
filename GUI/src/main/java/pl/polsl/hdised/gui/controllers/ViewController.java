@@ -8,6 +8,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.input.MouseEvent;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ViewController {
@@ -29,6 +30,9 @@ public class ViewController {
     private double minimalTemperatureFromStream;
     private double maximalTemperatureFromStream;
     private ArrayList<Double> allTemperaturesFromStream;
+
+    public ViewController() throws IOException {
+    }
 
     public void databaseGetAverageClicked(ActionEvent actionEvent) {
         averageTemperatureFromDatabase = operationController.getAverageTemperatureFromDatabase(
