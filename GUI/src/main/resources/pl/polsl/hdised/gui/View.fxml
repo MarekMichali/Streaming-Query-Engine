@@ -69,12 +69,12 @@
             </VBox>
             <VBox maxWidth="200.0" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                <children>
-                  <ChoiceBox fx:id="databaseDeviceChoiceBox" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
+                  <ChoiceBox fx:id="databaseDeviceChoiceBox" maxWidth="200.0" minWidth="200.0" onMouseClicked="#fillAllChoiceBoxes" prefWidth="200.0">
                      <VBox.margin>
                         <Insets bottom="3.0" top="3.0" />
                      </VBox.margin>
                   </ChoiceBox>
-                  <ChoiceBox fx:id="databaseLocationChoiceBox" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
+                  <ChoiceBox fx:id="databaseLocationChoiceBox" maxWidth="200.0" minWidth="200.0" onMouseClicked="#fillAllChoiceBoxes" prefWidth="200.0">
                      <VBox.margin>
                         <Insets bottom="3.0" top="3.0" />
                      </VBox.margin>
@@ -176,12 +176,12 @@
             </VBox>
             <VBox maxWidth="200.0" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                <children>
-                  <ChoiceBox fx:id="streamDeviceChoiceBox" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
+                  <ChoiceBox fx:id="streamDeviceChoiceBox" maxWidth="200.0" minWidth="200.0" onMouseClicked="#fillAllChoiceBoxes" prefWidth="200.0">
                      <VBox.margin>
                         <Insets bottom="3.0" top="3.0" />
                      </VBox.margin>
                   </ChoiceBox>
-                  <ChoiceBox fx:id="streamLocationChoiceBox" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
+                  <ChoiceBox fx:id="streamLocationChoiceBox" maxWidth="200.0" minWidth="200.0" onMouseClicked="#fillAllChoiceBoxes" prefWidth="200.0">
                      <VBox.margin>
                         <Insets bottom="3.0" top="3.0" />
                      </VBox.margin>

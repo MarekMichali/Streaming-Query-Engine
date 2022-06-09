@@ -5,8 +5,19 @@ import java.util.ArrayList;
 
 public class OperationController {
 
-    OperationController(){
+    private ArrayList<String> allDevices;
+    private ArrayList<String> allLocations;
 
+    OperationController(){
+        allDevices = getAllDevicesFromDatabase();
+        allLocations = getAllLocationsFromDatabase();
+    }
+
+    private ArrayList<String> getAllLocationsFromDatabase() {
+        return null;
+    }
+    private ArrayList<String> getAllDevicesFromDatabase() {
+        return null;
     }
 
     public double getAverageTemperatureFromDatabase(String device, String location, LocalDate minDate, LocalDate maxDate) {
@@ -21,6 +32,7 @@ public class OperationController {
     public ArrayList<Double> getAllTemperaturesFromDatabase(String device, String location, LocalDate minDate, LocalDate maxDate) {
         return new ArrayList<Double>();
     }
+
     public double getAverageTemperatureFromStream(String device, String location, LocalDate minDate, LocalDate maxDate) {
         return 0;
     }
@@ -32,5 +44,12 @@ public class OperationController {
     }
     public ArrayList<Double> getAllTemperaturesFromStream(String device, String location, LocalDate minDate, LocalDate maxDate) {
         return new ArrayList<Double>();
+    }
+
+    public ArrayList<String> getAllDevices() {
+        return allDevices;
+    }
+    public ArrayList<String> getAllLocations() {
+        return allLocations;
     }
 }

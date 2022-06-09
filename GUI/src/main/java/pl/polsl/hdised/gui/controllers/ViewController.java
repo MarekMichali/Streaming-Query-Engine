@@ -1,8 +1,13 @@
 package pl.polsl.hdised.gui.controllers;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.input.MouseEvent;
+
 import java.util.ArrayList;
 
 public class ViewController {
@@ -87,5 +92,15 @@ public class ViewController {
                 databaseLocationChoiceBox.getValue().toString(),
                 minDatePicker.getValue(),
                 maxDatePicker.getValue());
+    }
+
+    public void fillAllChoiceBoxes(MouseEvent mouseEvent) {
+        ObservableList<String> observableDeviceList = FXCollections.observableArrayList(operationController.getAllDevices());
+        ObservableList<String> observableLocationList = FXCollections.observableArrayList(operationController.getAllLocations());
+
+        databaseDeviceChoiceBox.setItems(observableDeviceList);
+        streamDeviceChoiceBox.setItems(observableDeviceList);
+        databaseLocationChoiceBox.setItems(observableLocationList);
+        streamLocationChoiceBox.setItems(observableLocationList);
     }
 }
