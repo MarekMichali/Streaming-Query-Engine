@@ -19,12 +19,12 @@ public class OperationController {
     private ArrayList<String> allDevices;
     private ArrayList<String> allLocations;
 
-    OperationController() throws IOException {
+    OperationController(){
         allDevices = getAllDevicesFromDatabase();
         allLocations = getAllLocationsFromDatabase();
     }
 
-    private ArrayList<String> getAllLocationsFromDatabase() throws IOException {
+    private ArrayList<String> getAllLocationsFromDatabase(){
         ArrayList<String> stringLocations = new ArrayList<>();
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpGet request = new HttpGet(URL + "/locations");
@@ -34,6 +34,8 @@ public class OperationController {
                     stringLocations.add((String) ((JSONObject) location).get("location"));
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return stringLocations;
     }
@@ -54,35 +56,58 @@ public class OperationController {
         return stringDevices;
     }
 
-    public double getAverageTemperatureFromDatabase(String device, String location, LocalDate minDate, LocalDate maxDate) {
+    public double getAverageTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
+        //URL + ?deviceId=dev02&location=Warszawa&startDate=2022-06-06 12:30&finishDate=2022-06-06 18:37
+        double receivedAverage = 0;
+/*
+
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            StringBuilder stringBuilder = new StringBuilder("");
+            stringBuilder.append("?deviceId=").append(deviceId);
+            stringBuilder.append("&location=").append(location);
+            stringBuilder.append("&startDate=").append(startDate);
+            stringBuilder.append("&finishDate=").append(finishDate);
+
+            HttpGet request = new HttpGet(URL + stringBuilder.toString());
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                JSONObject average = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
+                System.out.println(average);
+                receivedAverage = (double) average.get("avgTemp");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+*/
+
+        return receivedAverage;
+    }
+
+    public double getMinimalTemperatureFromDatabase(String device, String location, String startDate, String finishDate) {
         return 0;
     }
 
-    public double getMinimalTemperatureFromDatabase(String device, String location, LocalDate minDate, LocalDate maxDate) {
+    public double getMaximalTemperatureFromDatabase(String device, String location, String startDate, String finishDate) {
         return 0;
     }
 
-    public double getMaximalTemperatureFromDatabase(String device, String location, LocalDate minDate, LocalDate maxDate) {
-        return 0;
-    }
-
-    public ArrayList<Double> getAllTemperaturesFromDatabase(String device, String location, LocalDate minDate, LocalDate maxDate) {
+    public ArrayList<Double> getAllTemperaturesFromDatabase(String device, String location, String startDate, String finishDate) {
         return new ArrayList<Double>();
     }
 
-    public double getAverageTemperatureFromStream(String device, String location, LocalDate minDate, LocalDate maxDate) {
+    public double getAverageTemperatureFromStream(String device, String location) {
         return 0;
     }
 
-    public double getMinimalTemperatureFromStream(String device, String location, LocalDate minDate, LocalDate maxDate) {
+    public double getMinimalTemperatureFromStream(String device, String location) {
         return 0;
     }
 
-    public double getMaximalTemperatureFromStream(String device, String location, LocalDate minDate, LocalDate maxDate) {
+    public double getMaximalTemperatureFromStream(String device, String location) {
         return 0;
     }
 
-    public ArrayList<Double> getAllTemperaturesFromStream(String device, String location, LocalDate minDate, LocalDate maxDate) {
+    public ArrayList<Double> getAllTemperaturesFromStream(String device, String location) {
         return new ArrayList<Double>();
     }
 

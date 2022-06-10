@@ -81,4 +81,5 @@ consumer/target/classes/application.properties
 consumer/src/main/resources/application.properties
 /consumer/target/
 /producer/target/
+GUI/target/
 .idea/misc.xml
