@@ -1,6 +1,5 @@
 package pl.polsl.hdised.gui.controllers;
 
-import javafx.util.converter.LocalDateTimeStringConverter;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpHostConnectException;
@@ -16,10 +15,8 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -28,49 +25,38 @@ public class OperationController {
 
     private final String URL = "http://localhost:8081/api/v1/query";
 
-    private ArrayList<String> allDevices;
-    private ArrayList<String> allLocations;
-
-    OperationController(){
-
-    }
+    private ArrayList<String> devices;
+    private ArrayList<String> locations;
 
     public void getAllDevicesAndAllLocationsFromDatabase() {
-        allDevices = getAllDevicesFromDatabase();
-        allLocations = getAllLocationsFromDatabase();
+        devices = getAllDevicesFromDatabase();
+        locations = getAllLocationsFromDatabase();
     }
 
     private ArrayList<String> getAllLocationsFromDatabase(){
-        ArrayList<String> stringLocations = new ArrayList<>();
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            HttpGet request = new HttpGet(URL + "/locations");
-            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                JSONArray locations = new JSONArray(EntityUtils.toString(httpResponse.getEntity()));
-                for (Object location : locations) {
-                    stringLocations.add((String) ((JSONObject) location).get("location"));
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return stringLocations;
+        return getStringArrayListFromDatabase("/locations", "location");
     }
 
     private ArrayList<String> getAllDevicesFromDatabase() {
-        ArrayList<String> stringDevices = new ArrayList<>();
+        return getStringArrayListFromDatabase("/devices", "deviceId");
+    }
 
+    private ArrayList<String> getStringArrayListFromDatabase(String urlEnding, String parameter) {
+        ArrayList<String> strings = new ArrayList<>();
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            HttpGet request = new HttpGet(URL + "/devices");
+            HttpGet request = new HttpGet(URL + urlEnding);
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                JSONArray devices = new JSONArray(EntityUtils.toString(httpResponse.getEntity()));
-                for (Object device : devices) {
-                    stringDevices.add((String) ((JSONObject) device).get("deviceId"));
+                JSONArray jsonArray = new JSONArray(EntityUtils.toString(httpResponse.getEntity()));
+                for (Object o : jsonArray) {
+                    strings.add((String) ((JSONObject) o).get(parameter));
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return stringDevices;
+        return strings;
     }
 
     public double getAverageTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
@@ -101,35 +87,18 @@ public class OperationController {
     }
 
     public double getMinimalTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
-        double minTemperature = 0;
-
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            StringBuilder stringBuilder = new StringBuilder(URL + "/minimum-temperature");
-            stringBuilder.append("?deviceId=").append(deviceId);
-            stringBuilder.append("&location=").append(location);
-            stringBuilder.append("&startDate=").append(startDate);
-            stringBuilder.append("&finishDate=").append(finishDate);
-
-            HttpGet request = new HttpGet(stringBuilder.toString());
-
-
-            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                minTemperature = Double.parseDouble(EntityUtils.toString(httpResponse.getEntity()));
-                System.out.println(minTemperature);
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return minTemperature;
+        return getValueFromDatabase("/minimum-temperature", deviceId, location, startDate, finishDate);
     }
 
     public double getMaximalTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
-        double maxTemperature = 0;
+        return getValueFromDatabase("/maximum-temperature", deviceId, location, startDate, finishDate);
+    }
+
+    private double getValueFromDatabase(String urlEnding, String deviceId, String location, String startDate, String finishDate) {
+        double returnValue = 0;
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            StringBuilder stringBuilder = new StringBuilder(URL + "/maximum-temperature");
+            StringBuilder stringBuilder = new StringBuilder(URL + urlEnding);
             stringBuilder.append("?deviceId=").append(deviceId);
             stringBuilder.append("&location=").append(location);
             stringBuilder.append("&startDate=").append(startDate);
@@ -139,15 +108,14 @@ public class OperationController {
 
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                maxTemperature = Double.parseDouble(EntityUtils.toString(httpResponse.getEntity()));
-                System.out.println(maxTemperature);
-
+                returnValue = Double.parseDouble(EntityUtils.toString(httpResponse.getEntity()));
+                System.out.println(returnValue);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return maxTemperature;
+        return returnValue;
     }
 
     public ArrayList<TemperatureResponseDto> getAllTemperaturesFromDatabase(String deviceId, String location, String startDate, String finishDate) {
@@ -200,12 +168,12 @@ public class OperationController {
         return new ArrayList<>();
     }
 
-    public ArrayList<String> getAllDevices() {
-        return allDevices;
+    public ArrayList<String> getDevices() {
+        return devices;
     }
 
-    public ArrayList<String> getAllLocations() {
-        return allLocations;
+    public ArrayList<String> getLocations() {
+        return locations;
     }
 
     public boolean isConnectionGood() {
