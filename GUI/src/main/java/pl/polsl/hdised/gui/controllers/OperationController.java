@@ -3,6 +3,7 @@ package pl.polsl.hdised.gui.controllers;
 import javafx.util.converter.LocalDateTimeStringConverter;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
@@ -23,6 +24,10 @@ public class OperationController {
     private ArrayList<String> allLocations;
 
     OperationController(){
+
+    }
+
+    public void getAllDevicesAndAllLocationsFromDatabase() {
         allDevices = getAllDevicesFromDatabase();
         allLocations = getAllLocationsFromDatabase();
     }
@@ -120,5 +125,20 @@ public class OperationController {
 
     public ArrayList<String> getAllLocations() {
         return allLocations;
+    }
+
+    public boolean isConnectionGood() {
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            HttpGet request = new HttpGet(URL + "/devices");
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                return true;
+            }catch(HttpHostConnectException e){
+                System.out.println(e.getMessage());
+                return false;
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 }

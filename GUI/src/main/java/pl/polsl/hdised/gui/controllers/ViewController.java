@@ -41,7 +41,16 @@ public class ViewController{
     private ArrayList<Double> allTemperaturesFromStream;
 
     public void initialize(){
-        fillAllChoiceBoxes();
+        if(operationController.isConnectionGood()) {
+            operationController.getAllDevicesAndAllLocationsFromDatabase();
+            fillAllChoiceBoxes();
+        }else{
+            closeStageAndShowError();
+        }
+    }
+
+    private void closeStageAndShowError() {
+
     }
 
     public void getValueFromDatabase(ActionEvent actionEvent) {
