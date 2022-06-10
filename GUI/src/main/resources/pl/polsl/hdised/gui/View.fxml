@@ -69,22 +69,22 @@
             </VBox>
             <VBox maxWidth="200.0" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                <children>
-                  <ChoiceBox fx:id="databaseDeviceChoiceBox" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
+                  <ChoiceBox fx:id="databaseDeviceChoiceBox" maxWidth="200.0" minWidth="200.0" onMouseClicked="#fillAllChoiceBoxes" prefWidth="200.0">
                      <VBox.margin>
                         <Insets bottom="3.0" top="3.0" />
                      </VBox.margin>
                   </ChoiceBox>
-                  <ChoiceBox fx:id="databaseLocationChoiceBox" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
+                  <ChoiceBox fx:id="databaseLocationChoiceBox" maxWidth="200.0" minWidth="200.0" onMouseClicked="#fillAllChoiceBoxes" prefWidth="200.0">
                      <VBox.margin>
                         <Insets bottom="3.0" top="3.0" />
                      </VBox.margin>
                   </ChoiceBox>
-                  <DatePicker fx:id="startDatePicker" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
+                  <DatePicker fx:id="minDatePicker" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
                      <VBox.margin>
                         <Insets bottom="3.0" top="3.0" />
                      </VBox.margin>
                   </DatePicker>
-                  <DatePicker fx:id="finishDatePicker" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
+                  <DatePicker fx:id="maxDatePicker" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
                      <VBox.margin>
                         <Insets bottom="3.0" top="3.0" />
                      </VBox.margin>
@@ -102,22 +102,22 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Button fx:id="databaseGetAverageButton" mnemonicParsing="false" onAction="#getValueFromDatabase" text="Get average" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#databaseGetAverageClicked" text="Get average" GridPane.columnIndex="1" GridPane.halignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="databaseGetMinimalButton" mnemonicParsing="false" onAction="#getValueFromDatabase" text="Get minimal" GridPane.columnIndex="2" GridPane.halignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#databaseGetMinimalClicked" text="Get minimal" GridPane.columnIndex="2" GridPane.halignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="databaseGetMaximalButton" mnemonicParsing="false" onAction="#getValueFromDatabase" text="Get maximal" GridPane.columnIndex="3" GridPane.halignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#databaseGetMaximalClicked" text="Get Maximal" GridPane.columnIndex="3" GridPane.halignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="databaseGetAllButton" mnemonicParsing="false" onAction="#getValueFromDatabase" text="Get all" GridPane.halignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#databaseGetAllClicked" text="Get all" GridPane.halignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -176,12 +176,12 @@
             </VBox>
             <VBox maxWidth="200.0" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                <children>
-                  <ChoiceBox fx:id="streamDeviceChoiceBox" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
+                  <ChoiceBox fx:id="streamDeviceChoiceBox" maxWidth="200.0" minWidth="200.0" onMouseClicked="#fillAllChoiceBoxes" prefWidth="200.0">
                      <VBox.margin>
                         <Insets bottom="3.0" top="3.0" />
                      </VBox.margin>
                   </ChoiceBox>
-                  <ChoiceBox fx:id="streamLocationChoiceBox" maxWidth="200.0" minWidth="200.0" prefWidth="200.0">
+                  <ChoiceBox fx:id="streamLocationChoiceBox" maxWidth="200.0" minWidth="200.0" onMouseClicked="#fillAllChoiceBoxes" prefWidth="200.0">
                      <VBox.margin>
                         <Insets bottom="3.0" top="3.0" />
                      </VBox.margin>
@@ -204,22 +204,22 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Button fx:id="streamGetAverageButton" mnemonicParsing="false" onAction="#getValueFromStream" text="Get average" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#streamGetAverageClicked" text="Get average" GridPane.columnIndex="1" GridPane.halignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="streamGetMinimalButton" mnemonicParsing="false" onAction="#getValueFromStream" text="Get minimal" GridPane.columnIndex="2" GridPane.halignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#streamGetMinimalClicked" text="Get minimal" GridPane.columnIndex="2" GridPane.halignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="streamGetMaximalButton" mnemonicParsing="false" onAction="#getValueFromStream" text="Get maximal" GridPane.columnIndex="3" GridPane.halignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#streamGetMaximalClicked" text="Get Maximal" GridPane.columnIndex="3" GridPane.halignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="streamGetAllButton" mnemonicParsing="false" onAction="#getValueFromStream" text="Get all" GridPane.halignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#streamGetAllClicked" text="Get all" GridPane.halignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
