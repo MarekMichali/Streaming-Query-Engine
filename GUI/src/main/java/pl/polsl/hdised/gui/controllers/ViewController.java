@@ -99,7 +99,7 @@ public class ViewController{
 
     private String getFormattedStringFromLocalDate(LocalDate localDate) {
         StringBuilder stringBuilder = new StringBuilder(localDate.toString());
-        stringBuilder.append(" 00:00");
+        stringBuilder.append("%2000:00");
         return stringBuilder.toString();
     }
 

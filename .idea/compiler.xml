@@ -19,4 +19,9 @@
       <module name="Stream-Query-Engine" target="17" />
     </bytecodeTargetLevel>
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="consumer" options="" />
+    </option>
+  </component>
 </project>
