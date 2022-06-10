@@ -7,8 +7,11 @@ import pl.polsl.hdised.consumer.device.DeviceDto;
 import pl.polsl.hdised.consumer.exception.ParametersNotFoundException;
 import pl.polsl.hdised.consumer.exception.EmptyMeasurementsException;
 import pl.polsl.hdised.consumer.location.LocationDto;
+import pl.polsl.hdised.consumer.temperatureResponse.TemperatureResponseDto;
 
+import javax.persistence.Tuple;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("api/v1/query")
@@ -34,9 +37,24 @@ public class QueryController {
         return "Parameters set successfully";
     }
 
-    @GetMapping("/get-average")
+    @GetMapping("/temperatures")
+    public List<TemperatureResponseDto> getAllTemperatures(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException {
+        return this.queryService.getAllTemperatures(deviceId, location, stringStartDate, stringFinishDate);
+    }
+
+    @GetMapping("/average")
     public Float getStreamAverage() throws EmptyMeasurementsException {
         return this.queryService.getStreamAverage();
+    }
+
+    @GetMapping("/minimum-temperature")
+    public Float getMinimumTemperature(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException, ParametersNotFoundException {
+        return this.queryService.getMinimumTemperature(deviceId, location, stringStartDate, stringFinishDate);
+    }
+
+    @GetMapping("/maximum-temperature")
+    public Float getMaximumTemperature(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException, ParametersNotFoundException {
+        return this.queryService.getMaximumTemperature(deviceId, location, stringStartDate, stringFinishDate);
     }
 
     @GetMapping("/devices")

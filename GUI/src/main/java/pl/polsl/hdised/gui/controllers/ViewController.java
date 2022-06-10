@@ -6,6 +6,8 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
+import pl.polsl.hdised.gui.temperatureresponse.TemperatureResponseDto;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -33,7 +35,7 @@ public class ViewController{
     private double averageTemperatureFromDatabase;
     private double minimalTemperatureFromDatabase;
     private double maximalTemperatureFromDatabase;
-    private ArrayList<Double> allTemperaturesFromDatabase;
+    private ArrayList<TemperatureResponseDto> allTemperaturesFromDatabase;
 
     private double averageTemperatureFromStream;
     private double minimalTemperatureFromStream;

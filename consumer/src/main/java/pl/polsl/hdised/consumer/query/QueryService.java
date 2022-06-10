@@ -16,11 +16,14 @@ import pl.polsl.hdised.consumer.location.LocationRepository;
 import pl.polsl.hdised.consumer.measurement.MeasurementDto;
 import pl.polsl.hdised.consumer.measurement.MeasurementEntity;
 import pl.polsl.hdised.consumer.measurement.MeasurementRepository;
+import pl.polsl.hdised.consumer.temperatureResponse.TemperatureResponseDto;
 
 import javax.persistence.Tuple;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -161,4 +164,47 @@ public class QueryService {
         System.out.println("----------------------------");
     }
 
+    public Float getMinimumTemperature(String deviceId, String location, String stringStartDate, String stringFinishDate) throws ParseException, ParametersNotFoundException {
+        if(!parametersExists(deviceId, location)){
+            throw new ParametersNotFoundException();
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.ENGLISH);
+        Date startDate = format.parse(stringStartDate + ":00.000");
+        Date finishDate = format.parse(stringFinishDate + ":00.000");
+        return this.measurementRepository.getMinimumTemperature(Objects.requireNonNull(deviceId),
+                Objects.requireNonNull(location),
+                Objects.requireNonNull(startDate),
+                Objects.requireNonNull(finishDate));
+    }
+
+    public Float getMaximumTemperature(String deviceId, String location, String stringStartDate, String stringFinishDate) throws ParseException, ParametersNotFoundException {
+        if(!parametersExists(deviceId, location)){
+            throw new ParametersNotFoundException();
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.ENGLISH);
+        Date startDate = format.parse(stringStartDate + ":00.000");
+        Date finishDate = format.parse(stringFinishDate + ":00.000");
+        return this.measurementRepository.getMaximumTemperature(Objects.requireNonNull(deviceId),
+                Objects.requireNonNull(location),
+                Objects.requireNonNull(startDate),
+                Objects.requireNonNull(finishDate));
+    }
+
+    public List<TemperatureResponseDto> getAllTemperatures(String deviceId, String location, String stringStartDate, String stringFinishDate) throws ParseException {
+        List<TemperatureResponseDto> temperatureResponseDtos = new ArrayList<>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.ENGLISH);
+        Date startDate = format.parse(stringStartDate + ":00.000");
+        Date finishDate = format.parse(stringFinishDate + ":00.000");
+
+        for(Tuple record : this.measurementRepository.getAllTemperatures(deviceId, location, startDate, finishDate)){
+
+            var timestamp = record.get("date" , Timestamp.class);
+            LocalDateTime dateTime = timestamp.toLocalDateTime();
+            TemperatureResponseDto temperatureResponseDto = new TemperatureResponseDto(dateTime, record.get("temperature", Float.class));
+            temperatureResponseDtos.add(temperatureResponseDto);
+        }
+
+        return temperatureResponseDtos;
+    }
 }

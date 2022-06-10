@@ -10,4 +10,6 @@ module pl.polsl.hdised.gui {
 
     opens pl.polsl.hdised.gui.controllers to javafx.fxml;
     exports pl.polsl.hdised.gui.controllers;
+    exports pl.polsl.hdised.gui.temperatureresponse;
+    opens pl.polsl.hdised.gui.temperatureresponse to javafx.fxml;
 }
