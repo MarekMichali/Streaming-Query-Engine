@@ -83,3 +83,4 @@ consumer/src/main/resources/application.properties
 /producer/target/
 GUI/target/
 .idea/misc.xml
+GUI/GUI.iml
