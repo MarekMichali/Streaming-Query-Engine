@@ -1,32 +1,36 @@
-package pl.polsl.hdised.consumer.query;
+package pl.polsl.hdised.consumer.streamquery;
 
 import java.util.Objects;
 
-public final class Query {
+public final class StreamQuery {
 
-    private static volatile Query instance;
+    private static volatile StreamQuery instance;
 
     private String location;
     private String deviceId;
     private Float temperaturesSum;
     private Integer temperaturesCount;
+    private Float minimumTemperature;
+    private Float maximumTemperature;
 
-    private Query() {
+    private StreamQuery() {
         this.temperaturesSum = 0.0f;
         this.temperaturesCount = 0;
         this.location = "";
         this.deviceId = "";
+        this.maximumTemperature = Float.MAX_VALUE;
+        this.minimumTemperature = Float.MAX_VALUE;
     }
 
-    public static Query getInstance() {
-        Query result = instance;
+    public static StreamQuery getInstance() {
+        StreamQuery result = instance;
         if (!Objects.isNull(result)) {
             return result;
         }
 
-        synchronized (Query.class) {
+        synchronized (StreamQuery.class) {
             if (Objects.isNull(instance)) {
-                instance = new Query();
+                instance = new StreamQuery();
             }
             return instance;
         }
@@ -48,16 +52,32 @@ public final class Query {
         return deviceId;
     }
 
+    public Float getMinimumTemperature() {
+        return minimumTemperature;
+    }
+
+    public Float getMaximumTemperature() {
+        return maximumTemperature;
+    }
+
     public void setParameters(String location, String deviceId) {
         this.temperaturesSum = 0.0f;
         this.temperaturesCount = 0;
         this.location = location;
         this.deviceId = deviceId;
+        this.maximumTemperature = Float.MAX_VALUE;
+        this.minimumTemperature = Float.MAX_VALUE;
     }
 
     public void appendMeasurement(Float temperature) {
         this.temperaturesSum += temperature;
         this.temperaturesCount += 1;
+        if (temperature > this.maximumTemperature) {
+            this.maximumTemperature = temperature;
+        }
+        if (temperature < this.minimumTemperature) {
+            this.minimumTemperature = temperature;
+        }
     }
 
 

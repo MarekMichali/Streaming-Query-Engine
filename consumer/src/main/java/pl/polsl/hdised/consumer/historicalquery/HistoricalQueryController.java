@@ -1,4 +1,4 @@
-package pl.polsl.hdised.consumer.query;
+package pl.polsl.hdised.consumer.historicalquery;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -9,63 +9,53 @@ import pl.polsl.hdised.consumer.exception.EmptyMeasurementsException;
 import pl.polsl.hdised.consumer.location.LocationDto;
 import pl.polsl.hdised.consumer.temperatureResponse.TemperatureResponseDto;
 
-import javax.persistence.Tuple;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
-@RequestMapping("api/v1/query")
+@RequestMapping("api/v1/query/historical")
 @RestController
-public class QueryController {
+public class HistoricalQueryController {
 
-    private final QueryService queryService;
+    private final HistoricalQueryService historicalQueryService;
 
-    public QueryController(QueryService queryService) {
-        this.queryService = queryService;
+    public HistoricalQueryController(HistoricalQueryService historicalQueryService) {
+        this.historicalQueryService = historicalQueryService;
     }
 
 
-    @GetMapping
+    @GetMapping("/average")
     public AverageResponseDto getHistoricalAverage(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException, ParametersNotFoundException {
-        return this.queryService.getHistoricalAverage(deviceId, location, stringStartDate, stringFinishDate);
-    }
-
-    @PostMapping("/set-query-parameters")
-    public String setQueryParameters(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location) throws ParametersNotFoundException {
-        this.queryService.setQueryParameters(deviceId, location);
-
-        return "Parameters set successfully";
+        return this.historicalQueryService.getHistoricalAverage(deviceId, location, stringStartDate, stringFinishDate);
     }
 
     @GetMapping("/temperatures")
     public List<TemperatureResponseDto> getAllTemperatures(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException {
-        return this.queryService.getAllTemperatures(deviceId, location, stringStartDate, stringFinishDate);
-    }
-
-    @GetMapping("/average")
-    public Float getStreamAverage() throws EmptyMeasurementsException {
-        return this.queryService.getStreamAverage();
+        return this.historicalQueryService.getAllHistoricalTemperatures(deviceId, location, stringStartDate, stringFinishDate);
     }
 
     @GetMapping("/minimum-temperature")
-    public Float getMinimumTemperature(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException, ParametersNotFoundException {
-        return this.queryService.getMinimumTemperature(deviceId, location, stringStartDate, stringFinishDate);
+    public Float getMinimumHistoricalTemperature(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException, ParametersNotFoundException {
+        return this.historicalQueryService.getMinimumHistoricalTemperature(deviceId, location, stringStartDate, stringFinishDate);
     }
 
     @GetMapping("/maximum-temperature")
-    public Float getMaximumTemperature(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException, ParametersNotFoundException {
-        return this.queryService.getMaximumTemperature(deviceId, location, stringStartDate, stringFinishDate);
+    public Float getMaximumHistoricalTemperature(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException, ParametersNotFoundException {
+        return this.historicalQueryService.getMaximumHistoricalTemperature(deviceId, location, stringStartDate, stringFinishDate);
     }
 
     @GetMapping("/devices")
     public List<DeviceDto> getDevices() {
-        return this.queryService.getDevices();
+        return this.historicalQueryService.getDevices();
     }
 
     @GetMapping("/locations")
     public List<LocationDto> getLocations() {
-        return this.queryService.getLocations();
+        return this.historicalQueryService.getLocations();
     }
+
+
+
+
 
 
     @ExceptionHandler(ParseException.class)

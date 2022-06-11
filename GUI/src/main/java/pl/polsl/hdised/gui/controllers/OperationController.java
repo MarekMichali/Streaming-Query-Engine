@@ -1,6 +1,5 @@
 package pl.polsl.hdised.gui.controllers;
 
-import javafx.util.converter.LocalDateTimeStringConverter;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpHostConnectException;
@@ -16,10 +15,8 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -31,7 +28,7 @@ public class OperationController {
     private ArrayList<String> allDevices;
     private ArrayList<String> allLocations;
 
-    OperationController(){
+    OperationController() {
 
     }
 
@@ -40,7 +37,7 @@ public class OperationController {
         allLocations = getAllLocationsFromDatabase();
     }
 
-    private ArrayList<String> getAllLocationsFromDatabase(){
+    private ArrayList<String> getAllLocationsFromDatabase() {
         ArrayList<String> stringLocations = new ArrayList<>();
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpGet request = new HttpGet(URL + "/locations");
@@ -74,7 +71,6 @@ public class OperationController {
     }
 
     public double getAverageTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
-        //URL + ?deviceId=dev02&location=Warszawa&startDate=2022-06-06 12:30&finishDate=2022-06-06 18:37
         BigDecimal receivedAverage = new BigDecimal(0);
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
@@ -86,17 +82,14 @@ public class OperationController {
 
             HttpGet request = new HttpGet(stringBuilder.toString());
 
-
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 JSONObject average = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
                 System.out.println(average);
-                receivedAverage =  (BigDecimal) average.get("averageTemperature");
+                receivedAverage = (BigDecimal) average.get("averageTemperature");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         return receivedAverage.doubleValue();
     }
 
@@ -112,16 +105,13 @@ public class OperationController {
 
             HttpGet request = new HttpGet(stringBuilder.toString());
 
-
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 minTemperature = Double.parseDouble(EntityUtils.toString(httpResponse.getEntity()));
                 System.out.println(minTemperature);
-
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return minTemperature;
     }
 
@@ -137,16 +127,13 @@ public class OperationController {
 
             HttpGet request = new HttpGet(stringBuilder.toString());
 
-
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 maxTemperature = Double.parseDouble(EntityUtils.toString(httpResponse.getEntity()));
                 System.out.println(maxTemperature);
-
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return maxTemperature;
     }
 
@@ -172,7 +159,7 @@ public class OperationController {
                     Date dateTime = format.parse(((String) ((JSONObject) temperature).get("measureDate")).replace('T', ' '));
                     LocalDateTime localDateTime = Instant.ofEpochMilli(dateTime.getTime())
                             .atZone(ZoneId.systemDefault())
-                                    .toLocalDateTime();
+                            .toLocalDateTime();
                     temperatureResponseDto.setMeasureDate(localDateTime);
                     System.out.println(temperatureResponseDto);
                     temperatureResponseDtos.add(temperatureResponseDto);
@@ -213,7 +200,7 @@ public class OperationController {
             HttpGet request = new HttpGet(URL + "/devices");
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 return true;
-            }catch(HttpHostConnectException e){
+            } catch (HttpHostConnectException e) {
                 System.out.println(e.getMessage());
                 return false;
             }
