@@ -1,5 +1,6 @@
 package pl.polsl.hdised.consumer.streamquery;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.polsl.hdised.consumer.exception.EmptyMeasurementsException;
 import pl.polsl.hdised.consumer.exception.ParametersNotFoundException;
@@ -21,9 +22,32 @@ public class StreamQueryController {
         return "Parameters set successfully";
     }
 
-    @GetMapping("/average")
-    public Float getStreamAverage() throws EmptyMeasurementsException {
+    @GetMapping("/average-temperature")
+    public Float getStreamAverageTemperature() throws EmptyMeasurementsException {
         return this.streamQueryService.getStreamAverage();
+    }
+
+    @GetMapping("/minimum-temperature")
+    public Float getStreamMinimumTemperature() throws EmptyMeasurementsException {
+        return this.streamQueryService.getStreamMinimumTemperature();
+    }
+
+    @GetMapping("/maximum-temperature")
+    public Float getStreamMaximumTemperature() throws EmptyMeasurementsException {
+        return this.streamQueryService.getStreamMaximumTemperature();
+    }
+
+
+    @ExceptionHandler(ParametersNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String handleException(ParametersNotFoundException parametersNotFoundException) {
+        return parametersNotFoundException.getMessage();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String handleException(EmptyMeasurementsException emptyMeasurementsException) {
+        return emptyMeasurementsException.getMessage();
     }
 
 }

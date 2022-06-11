@@ -18,7 +18,7 @@ public final class StreamQuery {
         this.temperaturesCount = 0;
         this.location = "";
         this.deviceId = "";
-        this.maximumTemperature = Float.MAX_VALUE;
+        this.maximumTemperature = Float.MIN_VALUE;
         this.minimumTemperature = Float.MAX_VALUE;
     }
 
@@ -65,7 +65,7 @@ public final class StreamQuery {
         this.temperaturesCount = 0;
         this.location = location;
         this.deviceId = deviceId;
-        this.maximumTemperature = Float.MAX_VALUE;
+        this.maximumTemperature = Float.MIN_VALUE;
         this.minimumTemperature = Float.MAX_VALUE;
     }
 

@@ -44,8 +44,7 @@ public class StreamQueryService {
     }
 
     private Boolean parametersExists(String deviceId, String location) {
-        return !Objects.isNull(this.deviceRepository.findDeviceById(deviceId)) &&
-                !Objects.isNull(this.locationRepository.findLocationByCity(location));
+        return !Objects.isNull(this.deviceRepository.findDeviceById(deviceId)) && !Objects.isNull(this.locationRepository.findLocationByCity(location));
     }
 
     public Float getStreamAverage() throws EmptyMeasurementsException {
@@ -64,8 +63,7 @@ public class StreamQueryService {
     }
 
     private boolean areParametersEqualToQuery(MeasurementDto measurementDto) {
-        return measurementDto.getCityName().equals(StreamQuery.getInstance().getLocation()) &&
-                measurementDto.getDeviceId().equals(StreamQuery.getInstance().getDeviceId());
+        return measurementDto.getCityName().equals(StreamQuery.getInstance().getLocation()) && measurementDto.getDeviceId().equals(StreamQuery.getInstance().getDeviceId());
     }
 
     public void addMeasurement(MeasurementDto measurementDto) {
@@ -113,5 +111,21 @@ public class StreamQueryService {
         System.out.println(measurementDto.getUnit());
         System.out.println(measurementDto.getTemperature());
         System.out.println("----------------------------");
+    }
+
+    public Float getStreamMinimumTemperature() throws EmptyMeasurementsException {
+        StreamQuery streamQuery = StreamQuery.getInstance();
+        if (Objects.equals(streamQuery.getTemperaturesCount(), 0)) {
+            throw new EmptyMeasurementsException();
+        }
+        return streamQuery.getMinimumTemperature();
+    }
+
+    public Float getStreamMaximumTemperature() throws EmptyMeasurementsException {
+        StreamQuery streamQuery = StreamQuery.getInstance();
+        if (Objects.equals(streamQuery.getTemperaturesCount(), 0)) {
+            throw new EmptyMeasurementsException();
+        }
+        return streamQuery.getMaximumTemperature();
     }
 }

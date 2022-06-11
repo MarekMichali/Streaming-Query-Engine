@@ -76,9 +76,4 @@ public class HistoricalQueryController {
         return parametersNotFoundException.getMessage();
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    String handleException(EmptyMeasurementsException emptyMeasurementsException) {
-        return emptyMeasurementsException.getMessage();
-    }
 }
