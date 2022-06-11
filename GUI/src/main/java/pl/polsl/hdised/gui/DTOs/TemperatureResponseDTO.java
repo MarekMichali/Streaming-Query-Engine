@@ -14,7 +14,13 @@ public class TemperatureResponseDTO {
     }
 
     public void setDateAndTime(String dateAndTime) {
-        this.dateAndTime = dateAndTime;
+        StringBuilder stringBuilder = new StringBuilder(dateAndTime.substring(0,10));
+        stringBuilder.append(" ");
+        stringBuilder.append(dateAndTime.substring(11,19));
+        stringBuilder.append(" ");
+        stringBuilder.append(dateAndTime.substring(20));
+        stringBuilder.append("ms");
+        this.dateAndTime = stringBuilder.toString();
     }
 
     public String getDevice() {

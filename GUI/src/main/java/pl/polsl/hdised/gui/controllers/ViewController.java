@@ -126,6 +126,10 @@ public class ViewController{
                     data.getStartDate(),
                     data.getFinishDate()
             );
+            response.getValues().forEach(r ->{
+                r.setDevice(data.getDevice());
+                r.setLocation(data.getLocation());
+            });
             HandleMultipleValueResponseFromDatabase(response, request);
         }else {
             SingleValueDatabaseResponseDTO response = new SingleValueDatabaseResponseDTO(
@@ -193,12 +197,13 @@ public class ViewController{
     }
 
     private void fillDatabaseResultTableWithMultipleValueResponse(MultipleValueDatabaseResponseDTO response, String request) {
+
         ObservableList<TemperatureResponseDTO> resultRowObservableList = FXCollections.observableArrayList();
-        resultRowObservableList.add(response);
-        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(0)).setCellValueFactory(new PropertyValueFactory<>("Date"));
-        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(2)).setCellValueFactory(new PropertyValueFactory<>("device"));
-        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(3)).setCellValueFactory(new PropertyValueFactory<>("location"));
-        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(4)).setCellValueFactory(new PropertyValueFactory<>("value"));
+        resultRowObservableList.addAll(response.getValues());
+        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(0)).setCellValueFactory(new PropertyValueFactory<>("dateAndTime"));
+        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(1)).setCellValueFactory(new PropertyValueFactory<>("device"));
+        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(2)).setCellValueFactory(new PropertyValueFactory<>("location"));
+        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(3)).setCellValueFactory(new PropertyValueFactory<>("temperature"));
         databaseResultTable.setItems(resultRowObservableList);
     }
 

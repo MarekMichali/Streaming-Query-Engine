@@ -116,7 +116,7 @@ public class OperationController {
                 JSONArray temperatures = new JSONArray(EntityUtils.toString(httpResponse.getEntity()));
                 for (Object temperature : temperatures) {
                     TemperatureResponseDTO temperatureResponseDTO = new TemperatureResponseDTO();
-                    var value = ((BigDecimal) ((JSONObject) temperature).get("temperature")).doubleValue();
+                    String value = ((JSONObject) temperature).get("temperature").toString();
                     temperatureResponseDTO.setTemperature(value);
 
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.ENGLISH);
@@ -124,7 +124,7 @@ public class OperationController {
                     LocalDateTime localDateTime = Instant.ofEpochMilli(dateTime.getTime())
                             .atZone(ZoneId.systemDefault())
                                     .toLocalDateTime();
-                    temperatureResponseDTO.setMeasureDate(localDateTime);
+                    temperatureResponseDTO.setDateAndTime(localDateTime.toString());
                     System.out.println(temperatureResponseDTOArrayList);
                     temperatureResponseDTOArrayList.add(temperatureResponseDTO);
                 }
