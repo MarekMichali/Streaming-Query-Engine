@@ -2,6 +2,7 @@ package pl.polsl.hdised.gui.controllers;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -34,11 +35,11 @@ public class OperationController {
     }
 
     private ArrayList<String> getAllLocationsFromDatabase(){
-        return getStringArrayListFromDatabase("/locations", "location");
+        return getStringArrayListFromDatabase("/historical/locations", "location");
     }
 
     private ArrayList<String> getAllDevicesFromDatabase() {
-        return getStringArrayListFromDatabase("/devices", "deviceId");
+        return getStringArrayListFromDatabase("/historical/devices", "deviceId");
     }
 
     private ArrayList<String> getStringArrayListFromDatabase(String urlEnding, String parameter) {
@@ -64,7 +65,7 @@ public class OperationController {
         BigDecimal receivedAverage = new BigDecimal(0);
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            StringBuilder stringBuilder = new StringBuilder(URL);
+            StringBuilder stringBuilder = new StringBuilder(URL + "/historical/average");
             stringBuilder.append("?deviceId=").append(deviceId);
             stringBuilder.append("&location=").append(location);
             stringBuilder.append("&startDate=").append(startDate);
@@ -87,11 +88,11 @@ public class OperationController {
     }
 
     public double getMinimalTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
-        return getValueFromDatabase("/minimum-temperature", deviceId, location, startDate, finishDate);
+        return getValueFromDatabase("/historical/minimum-temperature", deviceId, location, startDate, finishDate);
     }
 
     public double getMaximalTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
-        return getValueFromDatabase("/maximum-temperature", deviceId, location, startDate, finishDate);
+        return getValueFromDatabase("/historical/maximum-temperature", deviceId, location, startDate, finishDate);
     }
 
     private double getValueFromDatabase(String urlEnding, String deviceId, String location, String startDate, String finishDate) {
@@ -121,7 +122,7 @@ public class OperationController {
     public ArrayList<TemperatureResponseDto> getAllTemperaturesFromDatabase(String deviceId, String location, String startDate, String finishDate) {
         ArrayList<TemperatureResponseDto> temperatureResponseDtos = new ArrayList<>();
 
-        StringBuilder stringBuilder = new StringBuilder(URL + "/temperatures");
+        StringBuilder stringBuilder = new StringBuilder(URL + "/historical/temperatures");
         stringBuilder.append("?deviceId=").append(deviceId);
         stringBuilder.append("&location=").append(location);
         stringBuilder.append("&startDate=").append(startDate);
@@ -152,16 +153,81 @@ public class OperationController {
         return temperatureResponseDtos;
     }
 
-    public double getAverageTemperatureFromStream(String device, String location) {
-        return 0;
+    public void setStreamQueryParameters(String deviceId, String location) throws IOException {
+        try(CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
+            StringBuilder stringBuilder = new StringBuilder(URL + "/stream/query-parameters");
+            stringBuilder.append("?deviceId=").append(deviceId);
+            stringBuilder.append("&location=").append(location);
+
+            HttpPost request = new HttpPost(stringBuilder.toString());
+
+            try(CloseableHttpResponse httpResponse = httpClient.execute(request)){
+                System.out.println("Parameters set successfully!");
+            }
+        }
     }
 
-    public double getMinimalTemperatureFromStream(String device, String location) {
-        return 0;
+    public double getAverageTemperatureFromStream(String deviceId, String location) {
+        Double receivedAverage = 0.0;
+
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            StringBuilder stringBuilder = new StringBuilder(URL + "/stream/average-temperature");
+            stringBuilder.append("?deviceId=").append(deviceId);
+            stringBuilder.append("&location=").append(location);
+
+            HttpGet request = new HttpGet(stringBuilder.toString());
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                receivedAverage = Double.parseDouble(EntityUtils.toString(httpResponse.getEntity()));
+                System.out.println(receivedAverage);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return receivedAverage;
     }
 
-    public double getMaximalTemperatureFromStream(String device, String location) {
-        return 0;
+    public double getMinimalTemperatureFromStream(String deviceId, String location) {
+        Double receivedMinimumTemperature = 0.0;
+
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            StringBuilder stringBuilder = new StringBuilder(URL + "/stream/minimum-temperature");
+            stringBuilder.append("?deviceId=").append(deviceId);
+            stringBuilder.append("&location=").append(location);
+
+            HttpGet request = new HttpGet(stringBuilder.toString());
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                receivedMinimumTemperature = Double.parseDouble(EntityUtils.toString(httpResponse.getEntity()));
+                System.out.println(receivedMinimumTemperature);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return receivedMinimumTemperature;
+    }
+
+    public double getMaximalTemperatureFromStream(String deviceId, String location) {
+        Double receivedMinimumTemperature = 0.0;
+
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            StringBuilder stringBuilder = new StringBuilder(URL + "/stream/maximum-temperature");
+            stringBuilder.append("?deviceId=").append(deviceId);
+            stringBuilder.append("&location=").append(location);
+
+            HttpGet request = new HttpGet(stringBuilder.toString());
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                receivedMinimumTemperature = Double.parseDouble(EntityUtils.toString(httpResponse.getEntity()));
+                System.out.println(receivedMinimumTemperature);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return receivedMinimumTemperature;
     }
 
     public ArrayList<Double> getAllTemperaturesFromStream(String device, String location) {

@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import pl.polsl.hdised.consumer.averageresponse.AverageResponseDto;
 import pl.polsl.hdised.consumer.device.DeviceDto;
 import pl.polsl.hdised.consumer.exception.ParametersNotFoundException;
-import pl.polsl.hdised.consumer.exception.EmptyMeasurementsException;
 import pl.polsl.hdised.consumer.location.LocationDto;
 import pl.polsl.hdised.consumer.temperatureResponse.TemperatureResponseDto;
 
@@ -52,10 +51,6 @@ public class HistoricalQueryController {
     public List<LocationDto> getLocations() {
         return this.historicalQueryService.getLocations();
     }
-
-
-
-
 
 
     @ExceptionHandler(ParseException.class)
