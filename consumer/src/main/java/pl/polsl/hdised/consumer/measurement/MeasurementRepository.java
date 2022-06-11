@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MeasurementRepository extends JpaRepository<MeasurementEntity, Long> {
 
-    @Query(value = "SELECT AVG(temperature) as averageTemperature, COUNT(*) as temperaturesCount\n" +
+    @Query(value = "SELECT AVG(temperature) as averageTemperature\n" +
             "FROM measurement \n" +
             "join device on measurement.device_id = device.id\n" +
             "join location on measurement.location_id = location.id\n" +
@@ -19,7 +19,7 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
             "device.device_id = :deviceId AND\n" +
             "location.city = :location AND\n" +
             "date.scan_date BETWEEN :startDate AND :finishDate", nativeQuery = true)
-    Tuple getAverageAndCount(@Param("deviceId") String deviceId, @Param("location") String location, @Param("startDate") Date startDate, @Param("finishDate") Date finishDate);
+    Float getAverage(@Param("deviceId") String deviceId, @Param("location") String location, @Param("startDate") Date startDate, @Param("finishDate") Date finishDate);
 
     @Query(value = "SELECT MIN(temperature) as averageTemperature\n" +
             "FROM measurement \n" +

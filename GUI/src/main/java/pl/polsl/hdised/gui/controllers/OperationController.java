@@ -9,7 +9,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import pl.polsl.hdised.gui.temperatureresponse.TemperatureResponseDto;
+import pl.polsl.hdised.gui.DTOs.MultipleValueDatabaseResponseDTO;
+import pl.polsl.hdised.gui.DTOs.TemperatureResponseDTO;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -60,50 +61,29 @@ public class OperationController {
         return strings;
     }
 
-    public double getAverageTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
-        //URL + ?deviceId=dev02&location=Warszawa&startDate=2022-06-06 12:30&finishDate=2022-06-06 18:37
-        BigDecimal receivedAverage = new BigDecimal(0);
-
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            StringBuilder stringBuilder = new StringBuilder(URL + "/historical/average");
-            stringBuilder.append("?deviceId=").append(deviceId);
-            stringBuilder.append("&location=").append(location);
-            stringBuilder.append("&startDate=").append(startDate);
-            stringBuilder.append("&finishDate=").append(finishDate);
-
-            HttpGet request = new HttpGet(stringBuilder.toString());
-
-
-            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                JSONObject average = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
-                System.out.println(average);
-                receivedAverage =  (BigDecimal) average.get("averageTemperature");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        return receivedAverage.doubleValue();
+    public Double getAverageTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
+        return getDoubleFromDatabase("/historical/average", deviceId, location, startDate, finishDate);
     }
 
-    public double getMinimalTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
-        return getValueFromDatabase("/historical/minimum-temperature", deviceId, location, startDate, finishDate);
+    public Double getMinimalTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
+        return getDoubleFromDatabase("/historical/minimum-temperature", deviceId, location, startDate, finishDate);
     }
 
-    public double getMaximalTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
-        return getValueFromDatabase("/historical/maximum-temperature", deviceId, location, startDate, finishDate);
+    public Double getMaximalTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
+        return getDoubleFromDatabase("/historical/maximum-temperature", deviceId, location, startDate, finishDate);
     }
 
-    private double getValueFromDatabase(String urlEnding, String deviceId, String location, String startDate, String finishDate) {
-        double returnValue = 0;
+    private Double getDoubleFromDatabase(String urlEnding, String deviceId, String location, String startDate, String finishDate) {
+        Double returnValue = 0d;
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             StringBuilder stringBuilder = new StringBuilder(URL + urlEnding);
             stringBuilder.append("?deviceId=").append(deviceId);
             stringBuilder.append("&location=").append(location);
             stringBuilder.append("&startDate=").append(startDate);
+            if(startDate.indexOf('%')==-1) stringBuilder.append("%2000:00");
             stringBuilder.append("&finishDate=").append(finishDate);
+            if(finishDate.indexOf('%')==-1) stringBuilder.append("%2000:00");
 
             HttpGet request = new HttpGet(stringBuilder.toString());
 
@@ -119,38 +99,42 @@ public class OperationController {
         return returnValue;
     }
 
-    public ArrayList<TemperatureResponseDto> getAllTemperaturesFromDatabase(String deviceId, String location, String startDate, String finishDate) {
-        ArrayList<TemperatureResponseDto> temperatureResponseDtos = new ArrayList<>();
+    public MultipleValueDatabaseResponseDTO getAllTemperaturesFromDatabase(String deviceId, String location, String startDate, String finishDate) {
+        ArrayList<TemperatureResponseDTO> temperatureResponseDTOArrayList = new ArrayList<>();
 
         StringBuilder stringBuilder = new StringBuilder(URL + "/historical/temperatures");
         stringBuilder.append("?deviceId=").append(deviceId);
         stringBuilder.append("&location=").append(location);
         stringBuilder.append("&startDate=").append(startDate);
+        if(startDate.indexOf('%')==-1) stringBuilder.append("%2000:00");
         stringBuilder.append("&finishDate=").append(finishDate);
+        if(finishDate.indexOf('%')==-1) stringBuilder.append("%2000:00");
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpGet request = new HttpGet(stringBuilder.toString());
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 JSONArray temperatures = new JSONArray(EntityUtils.toString(httpResponse.getEntity()));
                 for (Object temperature : temperatures) {
-                    TemperatureResponseDto temperatureResponseDto = new TemperatureResponseDto();
+                    TemperatureResponseDTO temperatureResponseDTO = new TemperatureResponseDTO();
                     var value = ((BigDecimal) ((JSONObject) temperature).get("temperature")).doubleValue();
-                    temperatureResponseDto.setTemperature(value);
+                    temperatureResponseDTO.setTemperature(value);
 
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.ENGLISH);
                     Date dateTime = format.parse(((String) ((JSONObject) temperature).get("measureDate")).replace('T', ' '));
                     LocalDateTime localDateTime = Instant.ofEpochMilli(dateTime.getTime())
                             .atZone(ZoneId.systemDefault())
                                     .toLocalDateTime();
-                    temperatureResponseDto.setMeasureDate(localDateTime);
-                    System.out.println(temperatureResponseDto);
-                    temperatureResponseDtos.add(temperatureResponseDto);
+                    temperatureResponseDTO.setMeasureDate(localDateTime);
+                    System.out.println(temperatureResponseDTOArrayList);
+                    temperatureResponseDTOArrayList.add(temperatureResponseDTO);
                 }
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-        return temperatureResponseDtos;
+        MultipleValueDatabaseResponseDTO responseDTO = new MultipleValueDatabaseResponseDTO();
+        responseDTO.setValues(temperatureResponseDTOArrayList);
+        return responseDTO;
     }
 
     public void setStreamQueryParameters(String deviceId, String location) throws IOException {

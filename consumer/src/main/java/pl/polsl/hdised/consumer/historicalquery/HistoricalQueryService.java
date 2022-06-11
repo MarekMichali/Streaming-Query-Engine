@@ -36,7 +36,7 @@ public class HistoricalQueryService {
     }
 
 
-    public AverageResponseDto getHistoricalAverage(String deviceId, String location, String stringStartDate, String stringFinishDate) throws ParseException, ParametersNotFoundException {
+    public Float getHistoricalAverage(String deviceId, String location, String stringStartDate, String stringFinishDate) throws ParseException, ParametersNotFoundException {
         if (!parametersExists(deviceId, location)) {
             throw new ParametersNotFoundException();
         }
@@ -44,15 +44,10 @@ public class HistoricalQueryService {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.ENGLISH);
         Date startDate = format.parse(stringStartDate + ":00.000");
         Date finishDate = format.parse(stringFinishDate + ":00.000");
-
-        Tuple tuple = this.measurementRepository.getAverageAndCount(Objects.requireNonNull(deviceId, "device id cannot be null"),
+        return this.measurementRepository.getAverage(Objects.requireNonNull(deviceId, "device id cannot be null"),
                 Objects.requireNonNull(location, "location cannot be null"),
                 Objects.requireNonNull(startDate, "date cannot be null"),
                 Objects.requireNonNull(finishDate, "date cannot be null"));
-
-        Double avgTemp = (Double) tuple.get("averageTemperature");
-        BigInteger tempsCount = (BigInteger) tuple.get("temperaturesCount");
-        return new AverageResponseDto(avgTemp.floatValue(), tempsCount.intValue());
     }
 
     public List<DeviceDto> getDevices() {

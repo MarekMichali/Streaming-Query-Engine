@@ -28,7 +28,7 @@ public class Application extends javafx.application.Application {
 
     private void showStage(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("View.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1200, 400);
+        Scene scene = new Scene(fxmlLoader.load(), 1280, 800);
         stage.setTitle("Stream Query Engine");
         stage.setScene(scene);
         stage.show();

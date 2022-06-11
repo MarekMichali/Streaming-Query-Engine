@@ -23,7 +23,7 @@ public class HistoricalQueryController {
 
 
     @GetMapping("/average")
-    public AverageResponseDto getHistoricalAverage(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException, ParametersNotFoundException {
+    public Float getHistoricalAverage(@RequestParam("deviceId") String deviceId, @RequestParam("location") String location, @RequestParam("startDate") String stringStartDate, @RequestParam("finishDate") String stringFinishDate) throws ParseException, ParametersNotFoundException {
         return this.historicalQueryService.getHistoricalAverage(deviceId, location, stringStartDate, stringFinishDate);
     }
 
