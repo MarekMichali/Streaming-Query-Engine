@@ -13,7 +13,6 @@ import pl.polsl.hdised.gui.DTOs.MultipleValueDatabaseResponseDTO;
 import pl.polsl.hdised.gui.DTOs.TemperatureResponseDTO;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;

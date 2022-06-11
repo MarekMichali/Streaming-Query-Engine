@@ -12,6 +12,4 @@ module pl.polsl.hdised.gui {
     exports pl.polsl.hdised.gui.controllers;
     opens pl.polsl.hdised.gui.DTOs to javafx.fxml;
     exports pl.polsl.hdised.gui.DTOs;
-    opens pl.polsl.hdised.gui.models to javafx.fxml;
-    exports pl.polsl.hdised.gui.models;
 }
