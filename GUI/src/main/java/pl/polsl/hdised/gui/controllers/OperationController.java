@@ -25,52 +25,42 @@ public class OperationController {
 
     private final String URL = "http://localhost:8081/api/v1/query";
 
-    private ArrayList<String> allDevices;
-    private ArrayList<String> allLocations;
-
-    OperationController() {
-
-    }
+    private ArrayList<String> devices;
+    private ArrayList<String> locations;
 
     public void getAllDevicesAndAllLocationsFromDatabase() {
-        allDevices = getAllDevicesFromDatabase();
-        allLocations = getAllLocationsFromDatabase();
+        devices = getAllDevicesFromDatabase();
+        locations = getAllLocationsFromDatabase();
     }
 
-    private ArrayList<String> getAllLocationsFromDatabase() {
-        ArrayList<String> stringLocations = new ArrayList<>();
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            HttpGet request = new HttpGet(URL + "/locations");
-            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                JSONArray locations = new JSONArray(EntityUtils.toString(httpResponse.getEntity()));
-                for (Object location : locations) {
-                    stringLocations.add((String) ((JSONObject) location).get("location"));
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return stringLocations;
+    private ArrayList<String> getAllLocationsFromDatabase(){
+        return getStringArrayListFromDatabase("/locations", "location");
     }
 
     private ArrayList<String> getAllDevicesFromDatabase() {
-        ArrayList<String> stringDevices = new ArrayList<>();
+        return getStringArrayListFromDatabase("/devices", "deviceId");
+    }
 
+    private ArrayList<String> getStringArrayListFromDatabase(String urlEnding, String parameter) {
+        ArrayList<String> strings = new ArrayList<>();
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            HttpGet request = new HttpGet(URL + "/devices");
+            HttpGet request = new HttpGet(URL + urlEnding);
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                JSONArray devices = new JSONArray(EntityUtils.toString(httpResponse.getEntity()));
-                for (Object device : devices) {
-                    stringDevices.add((String) ((JSONObject) device).get("deviceId"));
+                JSONArray jsonArray = new JSONArray(EntityUtils.toString(httpResponse.getEntity()));
+                for (Object o : jsonArray) {
+                    strings.add((String) ((JSONObject) o).get(parameter));
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return stringDevices;
+        return strings;
     }
 
     public double getAverageTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
+        //URL + ?deviceId=dev02&location=Warszawa&startDate=2022-06-06 12:30&finishDate=2022-06-06 18:37
         BigDecimal receivedAverage = new BigDecimal(0);
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
@@ -82,44 +72,33 @@ public class OperationController {
 
             HttpGet request = new HttpGet(stringBuilder.toString());
 
+
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 JSONObject average = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
                 System.out.println(average);
-                receivedAverage = (BigDecimal) average.get("averageTemperature");
+                receivedAverage =  (BigDecimal) average.get("averageTemperature");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
         return receivedAverage.doubleValue();
     }
 
     public double getMinimalTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
-        double minTemperature = 0;
-
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            StringBuilder stringBuilder = new StringBuilder(URL + "/minimum-temperature");
-            stringBuilder.append("?deviceId=").append(deviceId);
-            stringBuilder.append("&location=").append(location);
-            stringBuilder.append("&startDate=").append(startDate);
-            stringBuilder.append("&finishDate=").append(finishDate);
-
-            HttpGet request = new HttpGet(stringBuilder.toString());
-
-            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                minTemperature = Double.parseDouble(EntityUtils.toString(httpResponse.getEntity()));
-                System.out.println(minTemperature);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return minTemperature;
+        return getValueFromDatabase("/minimum-temperature", deviceId, location, startDate, finishDate);
     }
 
     public double getMaximalTemperatureFromDatabase(String deviceId, String location, String startDate, String finishDate) {
-        double maxTemperature = 0;
+        return getValueFromDatabase("/maximum-temperature", deviceId, location, startDate, finishDate);
+    }
+
+    private double getValueFromDatabase(String urlEnding, String deviceId, String location, String startDate, String finishDate) {
+        double returnValue = 0;
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            StringBuilder stringBuilder = new StringBuilder(URL + "/maximum-temperature");
+            StringBuilder stringBuilder = new StringBuilder(URL + urlEnding);
             stringBuilder.append("?deviceId=").append(deviceId);
             stringBuilder.append("&location=").append(location);
             stringBuilder.append("&startDate=").append(startDate);
@@ -127,14 +106,16 @@ public class OperationController {
 
             HttpGet request = new HttpGet(stringBuilder.toString());
 
+
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                maxTemperature = Double.parseDouble(EntityUtils.toString(httpResponse.getEntity()));
-                System.out.println(maxTemperature);
+                returnValue = Double.parseDouble(EntityUtils.toString(httpResponse.getEntity()));
+                System.out.println(returnValue);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return maxTemperature;
+
+        return returnValue;
     }
 
     public ArrayList<TemperatureResponseDto> getAllTemperaturesFromDatabase(String deviceId, String location, String startDate, String finishDate) {
@@ -159,7 +140,7 @@ public class OperationController {
                     Date dateTime = format.parse(((String) ((JSONObject) temperature).get("measureDate")).replace('T', ' '));
                     LocalDateTime localDateTime = Instant.ofEpochMilli(dateTime.getTime())
                             .atZone(ZoneId.systemDefault())
-                            .toLocalDateTime();
+                                    .toLocalDateTime();
                     temperatureResponseDto.setMeasureDate(localDateTime);
                     System.out.println(temperatureResponseDto);
                     temperatureResponseDtos.add(temperatureResponseDto);
@@ -187,12 +168,12 @@ public class OperationController {
         return new ArrayList<>();
     }
 
-    public ArrayList<String> getAllDevices() {
-        return allDevices;
+    public ArrayList<String> getDevices() {
+        return devices;
     }
 
-    public ArrayList<String> getAllLocations() {
-        return allLocations;
+    public ArrayList<String> getLocations() {
+        return locations;
     }
 
     public boolean isConnectionGood() {
@@ -200,7 +181,7 @@ public class OperationController {
             HttpGet request = new HttpGet(URL + "/devices");
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 return true;
-            } catch (HttpHostConnectException e) {
+            }catch(HttpHostConnectException e){
                 System.out.println(e.getMessage());
                 return false;
             }

@@ -115,8 +115,8 @@ public class ViewController{
     }
 
     private void fillAllChoiceBoxes() {
-        ObservableList<String> observableDeviceList = FXCollections.observableArrayList(operationController.getAllDevices());
-        ObservableList<String> observableLocationList = FXCollections.observableArrayList(operationController.getAllLocations());
+        ObservableList<String> observableDeviceList = FXCollections.observableArrayList(operationController.getDevices());
+        ObservableList<String> observableLocationList = FXCollections.observableArrayList(operationController.getLocations());
 
         databaseDeviceChoiceBox.setItems(observableDeviceList);
         streamDeviceChoiceBox.setItems(observableDeviceList);
