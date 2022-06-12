@@ -1,5 +1,6 @@
 package pl.polsl.hdised.gui.controllers;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -9,6 +10,7 @@ import pl.polsl.hdised.gui.DTOs.*;
 import pl.polsl.hdised.gui.exceptions.DatePickerException;
 import pl.polsl.hdised.gui.exceptions.WrongRequestException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ViewController{
@@ -40,6 +42,7 @@ public class ViewController{
 
     OperationController operationController = new OperationController();
 
+    boolean stopClicked = false;
     public void initialize(){
         operationController.getAllDevicesAndAllLocationsFromDatabase();
         fillAllChoiceBoxes();
@@ -59,22 +62,6 @@ public class ViewController{
         streamLocationChoiceBox.setValue(streamLocationChoiceBox.getItems().get(0));
     }
 
-    public void sendStreamRequestClicked(ActionEvent actionEvent) {
-        try {
-            sendRequestWithDataToStream(getRequestFromChoiceBox(streamRequestChoiceBox),getStreamRequestDTOFromJavaFXControls());
-        } catch (WrongRequestException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private StreamRequestDTO getStreamRequestDTOFromJavaFXControls() {
-        HideStreamSectionErrorLabel();
-        StreamRequestDTO result = new StreamRequestDTO();
-        result.setDevice(streamDeviceChoiceBox.getValue().toString());
-        result.setLocation(streamLocationChoiceBox.getValue().toString());
-        return result;
-    }
-
     public void sendDatabaseRequestClicked(ActionEvent actionEvent) {
         HideDatabaseSectionErrorLabel();
         try {
@@ -85,22 +72,13 @@ public class ViewController{
             UpdateAndShowDatabaseSectionErrorLabel(e.getMessage());
         }
     }
-
+    private void HideDatabaseSectionErrorLabel(){
+        databaseSectionErrorLabel.setVisible(false);
+    }
     private void UpdateAndShowDatabaseSectionErrorLabel(String message) {
         databaseSectionErrorLabel.setText(message);
         databaseSectionErrorLabel.setVisible(true);
     }
-    private void HideDatabaseSectionErrorLabel(){
-        databaseSectionErrorLabel.setVisible(false);
-    }
-    private void UpdateAndShowStreamSectionErrorLabel(String message) {
-        streamSectionErrorLabel.setText(message);
-        streamSectionErrorLabel.setVisible(true);
-    }
-    private void HideStreamSectionErrorLabel(){
-        streamSectionErrorLabel.setVisible(false);
-    }
-
     private DatabaseRequestDTO getDatabaseRequestDTOFromJavaFXControls() throws DatePickerException {
         DatabaseRequestDTO result = new DatabaseRequestDTO();
 
@@ -117,10 +95,9 @@ public class ViewController{
 
         return result;
     }
-
     private void sendRequestWithDataToDatabaseAndHandleResponse(String request, DatabaseRequestDTO data) throws WrongRequestException {
         if(request.equals("all")) {
-            MultipleValueDatabaseResponseDTO response = operationController.getAllTemperaturesFromDatabase(
+            MultipleValueResponseDTO response = operationController.getAllTemperaturesFromDatabase(
                     data.getDevice(),
                     data.getLocation(),
                     data.getStartDate(),
@@ -145,30 +122,42 @@ public class ViewController{
                         data.getLocation(),
                         data.getStartDate(),
                         data.getFinishDate()
-                ).toString());
+                ));
                 case "minimal" -> response.setValue(operationController.getMinimalTemperatureFromDatabase(
                         data.getDevice(),
                         data.getLocation(),
                         data.getStartDate(),
                         data.getFinishDate()
-                ).toString());
+                ));
                 case "maximal" -> response.setValue(operationController.getMaximalTemperatureFromDatabase(
                         data.getDevice(),
                         data.getLocation(),
                         data.getStartDate(),
                         data.getFinishDate()
-                ).toString());
+                ));
                 default -> throw new WrongRequestException("Unknown request: " + request);
             }
             HandleSingeValueResponseFromDatabase(response, request);
         }
     }
-
+    private void HandleMultipleValueResponseFromDatabase(MultipleValueResponseDTO response, String request) {
+        initializeResultTableForMultipleValueResponse(databaseResultTable);
+        fillResultTableWithMultipleValueResponse(databaseResultTable, response, request);
+    }
     private void HandleSingeValueResponseFromDatabase(SingleValueDatabaseResponseDTO response, String valueType) {
         initializeDatabaseResultTableForSingleValueResponse(valueType);
         fillDatabaseResultTableWithSingleValueResponse(response);
     }
-
+    private void initializeDatabaseResultTableForSingleValueResponse(String valueType) {
+        databaseResultTable.getColumns().clear();
+        ArrayList<TableColumn<SingleValueDatabaseResponseDTO, String>> columnDefinitions = new ArrayList<>();
+        columnDefinitions.add(new TableColumn<>("Start Date"));
+        columnDefinitions.add(new TableColumn<>("Finish Date"));
+        columnDefinitions.add(new TableColumn<>("Device"));
+        columnDefinitions.add(new TableColumn<>("Location"));
+        columnDefinitions.add(new TableColumn<>(valueType.substring(0, 1).toUpperCase() + valueType.substring(1)));
+        databaseResultTable.getColumns().addAll(columnDefinitions);
+    }
     private void fillDatabaseResultTableWithSingleValueResponse(SingleValueDatabaseResponseDTO response) {
         ObservableList<SingleValueDatabaseResponseDTO> resultRowObservableList = FXCollections.observableArrayList();
         resultRowObservableList.add(response);
@@ -180,64 +169,107 @@ public class ViewController{
         databaseResultTable.setItems(resultRowObservableList);
     }
 
-    private void initializeDatabaseResultTableForSingleValueResponse(String valueType) {
-        databaseResultTable.getColumns().clear();
+    public void setQueryParametersClicked(ActionEvent actionEvent) {
+        StreamRequestDTO data = getStreamRequestDTOFromJavaFXControls();
+        try {
+            operationController.setStreamQueryParameters(data.getDevice(),data.getLocation());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void sendStreamRequestClicked(ActionEvent actionEvent) {
+        stopClicked=false;
+        StreamRequestDTO data = getStreamRequestDTOFromJavaFXControls();
+
+
+        Thread taskThread = new Thread(() -> {
+            while(!stopClicked){
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            sendRequestWithDataToStreamAndHandleResponse(
+                                    getRequestFromChoiceBox(streamRequestChoiceBox),
+                                    data);
+                        } catch (WrongRequestException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+            }
+        });
+
+        taskThread.start();
+    }
+    private void HideStreamSectionErrorLabel(){
+        streamSectionErrorLabel.setVisible(false);
+    }
+    private void UpdateAndShowStreamSectionErrorLabel(String message) {
+        streamSectionErrorLabel.setText(message);
+        streamSectionErrorLabel.setVisible(true);
+    }
+    private StreamRequestDTO getStreamRequestDTOFromJavaFXControls() {
+        HideStreamSectionErrorLabel();
+        StreamRequestDTO result = new StreamRequestDTO();
+        result.setDevice(streamDeviceChoiceBox.getValue().toString());
+        result.setLocation(streamLocationChoiceBox.getValue().toString());
+        return result;
+    }
+    private void sendRequestWithDataToStreamAndHandleResponse(String request, StreamRequestDTO data) throws WrongRequestException {
+        if(request.equals("all")) {
+            MultipleValueResponseDTO response = operationController.getAllTemperaturesFromStream();
+            response.getValues().forEach(r ->{
+                r.setDevice(data.getDevice());
+                r.setLocation(data.getLocation());
+            });
+            HandleMultipleValueResponseFromStream(response, request);
+        }else {
+            SingleValueStreamResponseDTO response = new SingleValueStreamResponseDTO(
+                    data.getDevice(),
+                    data.getLocation(),
+                    ""
+            );
+            switch (request) {
+                case "average" -> response.setValue(operationController.getAverageTemperatureFromStream());
+                case "minimal" -> response.setValue(operationController.getMinimalTemperatureFromStream());
+                case "maximal" -> response.setValue(operationController.getMaximalTemperatureFromStream());
+                default -> throw new WrongRequestException("Unknown request: " + request);
+            }
+            HandleSingeValueResponseFromStream(response, request);
+        }
+    }
+    private void HandleMultipleValueResponseFromStream(MultipleValueResponseDTO response, String request) {
+        initializeResultTableForMultipleValueResponse(streamResultTable);
+        fillResultTableWithMultipleValueResponse(streamResultTable, response, request);
+    }
+    private void HandleSingeValueResponseFromStream(SingleValueStreamResponseDTO response, String valueType) {
+        initializeStreamResultTableForSingleValueResponse(valueType);
+        fillStreamResultTableWithSingleValueResponse(response);
+    }
+    private void initializeStreamResultTableForSingleValueResponse(String valueType) {
+        streamResultTable.getColumns().clear();
         ArrayList<TableColumn<SingleValueDatabaseResponseDTO, String>> columnDefinitions = new ArrayList<>();
-        columnDefinitions.add(new TableColumn<>("Start Date"));
-        columnDefinitions.add(new TableColumn<>("Finish Date"));
         columnDefinitions.add(new TableColumn<>("Device"));
         columnDefinitions.add(new TableColumn<>("Location"));
         columnDefinitions.add(new TableColumn<>(valueType.substring(0, 1).toUpperCase() + valueType.substring(1)));
-        databaseResultTable.getColumns().addAll(columnDefinitions);
+        streamResultTable.getColumns().addAll(columnDefinitions);
     }
-
-    private void HandleMultipleValueResponseFromDatabase(MultipleValueDatabaseResponseDTO response, String request) {
-        initializeDatabaseResultTableForMultipleValueResponse();
-        fillDatabaseResultTableWithMultipleValueResponse(response, request);
-    }
-
-    private void fillDatabaseResultTableWithMultipleValueResponse(MultipleValueDatabaseResponseDTO response, String request) {
-
-        ObservableList<TemperatureResponseDTO> resultRowObservableList = FXCollections.observableArrayList();
-        resultRowObservableList.addAll(response.getValues());
-        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(0)).setCellValueFactory(new PropertyValueFactory<>("dateAndTime"));
-        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(1)).setCellValueFactory(new PropertyValueFactory<>("device"));
-        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(2)).setCellValueFactory(new PropertyValueFactory<>("location"));
-        ((TableColumn<MultipleValueDatabaseResponseDTO, String>)databaseResultTable.getColumns().get(3)).setCellValueFactory(new PropertyValueFactory<>("temperature"));
-        databaseResultTable.setItems(resultRowObservableList);
-    }
-
-    private void initializeDatabaseResultTableForMultipleValueResponse() {
-        databaseResultTable.getColumns().clear();
-        ArrayList<TableColumn<TemperatureResponseDTO, String>> columnDefinitions = new ArrayList<>();
-        columnDefinitions.add(new TableColumn<>("Date and Time"));
-        columnDefinitions.add(new TableColumn<>("Device"));
-        columnDefinitions.add(new TableColumn<>("Location"));
-        columnDefinitions.add(new TableColumn<>("Temperature"));
-        databaseResultTable.getColumns().addAll(columnDefinitions);
-    }
-
-    private void sendRequestWithDataToStream(String request, StreamRequestDTO data) throws WrongRequestException {
-        switch (request) {
-            case "all" -> operationController.getAllTemperaturesFromStream(
-                    data.getDevice(),
-                    data.getLocation()
-            );
-            case "average" -> operationController.getAverageTemperatureFromStream(
-                    data.getDevice(),
-                    data.getLocation()
-            );
-            case "minimal" -> operationController.getMinimalTemperatureFromStream(
-                    data.getDevice(),
-                    data.getLocation()
-            );
-            case "maximal" -> operationController.getMaximalTemperatureFromStream(
-                    data.getDevice(),
-                    data.getLocation()
-            );
-            default -> throw new WrongRequestException("Unknown request: " + request);
+    private void fillStreamResultTableWithSingleValueResponse(SingleValueStreamResponseDTO response) {
+        try{Double.parseDouble(response.getValue());}catch(NumberFormatException e){
+            response.setValue("empty");
         }
-
+        ObservableList<SingleValueStreamResponseDTO> resultRowObservableList = FXCollections.observableArrayList();
+        resultRowObservableList.add(response);
+        ((TableColumn<SingleValueDatabaseResponseDTO, String>)streamResultTable.getColumns().get(0)).setCellValueFactory(new PropertyValueFactory<>("device"));
+        ((TableColumn<SingleValueDatabaseResponseDTO, String>)streamResultTable.getColumns().get(1)).setCellValueFactory(new PropertyValueFactory<>("location"));
+        ((TableColumn<SingleValueDatabaseResponseDTO, String>)streamResultTable.getColumns().get(2)).setCellValueFactory(new PropertyValueFactory<>("value"));
+        streamResultTable.setItems(resultRowObservableList);
     }
 
     private String getRequestFromChoiceBox(ChoiceBox requestChoiceBox) throws WrongRequestException {
@@ -248,5 +280,27 @@ public class ViewController{
         else if(requestChoiceBox.getValue().toString().contains("maximal")) request = "maximal";
         else throw new WrongRequestException("Unknown request: " + request);
         return request;
+    }
+    private void initializeResultTableForMultipleValueResponse(TableView table) {
+        table.getColumns().clear();
+        ArrayList<TableColumn<TemperatureResponseDTO, String>> columnDefinitions = new ArrayList<>();
+        columnDefinitions.add(new TableColumn<>("Date and Time"));
+        columnDefinitions.add(new TableColumn<>("Device"));
+        columnDefinitions.add(new TableColumn<>("Location"));
+        columnDefinitions.add(new TableColumn<>("Temperature"));
+        table.getColumns().addAll(columnDefinitions);
+    }
+    private void fillResultTableWithMultipleValueResponse(TableView table, MultipleValueResponseDTO response, String request) {
+        ObservableList<TemperatureResponseDTO> resultRowObservableList = FXCollections.observableArrayList();
+        resultRowObservableList.addAll(response.getValues());
+        ((TableColumn<MultipleValueResponseDTO, String>)table.getColumns().get(0)).setCellValueFactory(new PropertyValueFactory<>("dateAndTime"));
+        ((TableColumn<MultipleValueResponseDTO, String>)table.getColumns().get(1)).setCellValueFactory(new PropertyValueFactory<>("device"));
+        ((TableColumn<MultipleValueResponseDTO, String>)table.getColumns().get(2)).setCellValueFactory(new PropertyValueFactory<>("location"));
+        ((TableColumn<MultipleValueResponseDTO, String>)table.getColumns().get(3)).setCellValueFactory(new PropertyValueFactory<>("temperature"));
+        table.setItems(resultRowObservableList);
+    }
+
+    public void stopClicked(ActionEvent actionEvent) {
+        stopClicked = true;
     }
 }

@@ -2,7 +2,7 @@ package pl.polsl.hdised.gui.DTOs;
 
 import java.util.ArrayList;
 
-public class MultipleValueDatabaseResponseDTO {
+public class MultipleValueResponseDTO {
     private ArrayList <TemperatureResponseDTO> values;
     public ArrayList<TemperatureResponseDTO> getValues() {
         return values;
