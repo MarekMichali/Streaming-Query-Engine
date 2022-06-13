@@ -14,6 +14,7 @@ import pl.polsl.hdised.consumer.measurement.MeasurementEntity;
 import pl.polsl.hdised.consumer.measurement.MeasurementRepository;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -58,7 +59,7 @@ public class StreamQueryService {
     public void UpdateQuery(MeasurementDto measurementDto) {
         if (areParametersEqualToQuery(measurementDto)) {
             System.out.println("Parameters are equal, adding to Average...");
-            StreamQuery.getInstance().appendMeasurement(measurementDto.getTemperature());
+            StreamQuery.getInstance().appendMeasurement(measurementDto);
         }
     }
 
@@ -127,5 +128,9 @@ public class StreamQueryService {
             throw new EmptyMeasurementsException();
         }
         return streamQuery.getMaximumTemperature();
+    }
+
+    public List<Object> getMeasurements(){
+        return StreamQuery.getInstance().getMeasurements();
     }
 }

@@ -1,5 +1,10 @@
 package pl.polsl.hdised.consumer.streamquery;
 
+import pl.polsl.hdised.consumer.limitedqueue.LimitedQueue;
+import pl.polsl.hdised.consumer.measurement.MeasurementDto;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public final class StreamQuery {
@@ -12,6 +17,7 @@ public final class StreamQuery {
     private Integer temperaturesCount;
     private Float minimumTemperature;
     private Float maximumTemperature;
+    private LimitedQueue<MeasurementDto> measurementDtos;
 
     private StreamQuery() {
         this.temperaturesSum = 0.0f;
@@ -20,6 +26,7 @@ public final class StreamQuery {
         this.deviceId = "";
         this.maximumTemperature = Float.MIN_VALUE;
         this.minimumTemperature = Float.MAX_VALUE;
+        this.measurementDtos = new LimitedQueue<>();
     }
 
     public static StreamQuery getInstance() {
@@ -69,16 +76,20 @@ public final class StreamQuery {
         this.minimumTemperature = Float.MAX_VALUE;
     }
 
-    public void appendMeasurement(Float temperature) {
-        this.temperaturesSum += temperature;
+    public void appendMeasurement(MeasurementDto measurementDto) {
+        this.temperaturesSum += measurementDto.getTemperature();
         this.temperaturesCount += 1;
-        if (temperature > this.maximumTemperature) {
-            this.maximumTemperature = temperature;
+        if (measurementDto.getTemperature() > this.maximumTemperature) {
+            this.maximumTemperature = measurementDto.getTemperature();
         }
-        if (temperature < this.minimumTemperature) {
-            this.minimumTemperature = temperature;
+        if (measurementDto.getTemperature() < this.minimumTemperature) {
+            this.minimumTemperature = measurementDto.getTemperature();
         }
+        this.measurementDtos.add(measurementDto);
     }
 
+    public List<Object> getMeasurements() {
+        return Arrays.asList(this.measurementDtos.toArray());
+    }
 
 }
