@@ -9,6 +9,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import pl.polsl.hdised.gui.DTOs.*;
 import pl.polsl.hdised.gui.exceptions.DatePickerException;
 import pl.polsl.hdised.gui.exceptions.WrongRequestException;
+import pl.polsl.hdised.gui.services.DatabaseService;
+import pl.polsl.hdised.gui.services.StreamService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,17 +41,16 @@ public class ViewController{
     //<editor-fold desc="Stream Result Table">
     public TableView streamResultTable;
     //</editor-fold>
-
-    OperationController operationController = new OperationController();
-
     boolean stopClicked = false;
+
     public void initialize(){
-        operationController.getAllDevicesAndAllLocationsFromDatabase();
         fillAllChoiceBoxes();
     }
     private void fillAllChoiceBoxes() {
-        ObservableList<String> observableDeviceList = FXCollections.observableArrayList(operationController.getDevices());
-        ObservableList<String> observableLocationList = FXCollections.observableArrayList(operationController.getLocations());
+        ArrayList<String> deviceList = DatabaseService.getAllDevicesFromDatabase();
+        ArrayList<String> locationList = DatabaseService.getAllLocationsFromDatabase();
+        ObservableList<String> observableDeviceList = FXCollections.observableArrayList(deviceList);
+        ObservableList<String> observableLocationList = FXCollections.observableArrayList(locationList);
 
         databaseDeviceChoiceBox.setItems(observableDeviceList);
         streamDeviceChoiceBox.setItems(observableDeviceList);
@@ -97,13 +98,13 @@ public class ViewController{
     }
     private void sendRequestWithDataToDatabaseAndHandleResponse(String request, DatabaseRequestDTO data) throws WrongRequestException {
         if(request.equals("all")) {
-            MultipleValueResponseDTO response = operationController.getAllTemperaturesFromDatabase(
+            ArrayList<TemperatureResponseDTO> response = DatabaseService.getAllTemperaturesFromDatabase(
                     data.getDevice(),
                     data.getLocation(),
                     data.getStartDate(),
                     data.getFinishDate()
             );
-            response.getValues().forEach(r ->{
+            response.forEach(r ->{
                 r.setDevice(data.getDevice());
                 r.setLocation(data.getLocation());
             });
@@ -117,19 +118,19 @@ public class ViewController{
                     ""
             );
             switch (request) {
-                case "average" -> response.setValue(operationController.getAverageTemperatureFromDatabase(
+                case "average" -> response.setValue(DatabaseService.getAverageTemperatureFromDatabase(
                         data.getDevice(),
                         data.getLocation(),
                         data.getStartDate(),
                         data.getFinishDate()
                 ));
-                case "minimal" -> response.setValue(operationController.getMinimalTemperatureFromDatabase(
+                case "minimal" -> response.setValue(DatabaseService.getMinimalTemperatureFromDatabase(
                         data.getDevice(),
                         data.getLocation(),
                         data.getStartDate(),
                         data.getFinishDate()
                 ));
-                case "maximal" -> response.setValue(operationController.getMaximalTemperatureFromDatabase(
+                case "maximal" -> response.setValue(DatabaseService.getMaximalTemperatureFromDatabase(
                         data.getDevice(),
                         data.getLocation(),
                         data.getStartDate(),
@@ -140,9 +141,9 @@ public class ViewController{
             HandleSingeValueResponseFromDatabase(response, request);
         }
     }
-    private void HandleMultipleValueResponseFromDatabase(MultipleValueResponseDTO response, String request) {
+    private void HandleMultipleValueResponseFromDatabase(ArrayList<TemperatureResponseDTO> response, String request) {
         initializeResultTableForMultipleValueResponse(databaseResultTable);
-        fillResultTableWithMultipleValueResponse(databaseResultTable, response, request);
+        fillResultTableWithMultipleValueResponse(databaseResultTable, response);
     }
     private void HandleSingeValueResponseFromDatabase(SingleValueDatabaseResponseDTO response, String valueType) {
         initializeDatabaseResultTableForSingleValueResponse(valueType);
@@ -172,7 +173,7 @@ public class ViewController{
     public void setQueryParametersClicked(ActionEvent actionEvent) {
         StreamRequestDTO data = getStreamRequestDTOFromJavaFXControls();
         try {
-            operationController.setStreamQueryParameters(data.getDevice(),data.getLocation());
+            StreamService.setStreamQueryParameters(data.getDevice(),data.getLocation());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -180,32 +181,13 @@ public class ViewController{
     public void sendStreamRequestClicked(ActionEvent actionEvent) {
         stopClicked=false;
         StreamRequestDTO data = getStreamRequestDTOFromJavaFXControls();
-
-
-        Thread taskThread = new Thread(() -> {
-            while(!stopClicked){
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            sendRequestWithDataToStreamAndHandleResponse(
-                                    getRequestFromChoiceBox(streamRequestChoiceBox),
-                                    data);
-                        } catch (WrongRequestException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                });
-            }
-        });
-
-        taskThread.start();
+        try {
+            sendRequestWithDataToStreamAndHandleResponse(
+                    getRequestFromChoiceBox(streamRequestChoiceBox),
+                    data);
+        } catch (WrongRequestException e) {
+            throw new RuntimeException(e);
+        }
     }
     private void HideStreamSectionErrorLabel(){
         streamSectionErrorLabel.setVisible(false);
@@ -223,34 +205,58 @@ public class ViewController{
     }
     private void sendRequestWithDataToStreamAndHandleResponse(String request, StreamRequestDTO data) throws WrongRequestException {
         if(request.equals("all")) {
-            MultipleValueResponseDTO response = operationController.getAllTemperaturesFromStream();
-            response.getValues().forEach(r ->{
-                r.setDevice(data.getDevice());
-                r.setLocation(data.getLocation());
+            initializeResultTableForMultipleValueResponse(streamResultTable);
+
+            Thread taskThread = new Thread(() -> {
+                while(!stopClicked){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            ArrayList<TemperatureResponseDTO> response = StreamService.getAllTemperaturesFromStream();
+                            response.forEach(r ->{
+                                    r.setDevice(data.getDevice());
+                                    r.setLocation(data.getLocation());
+                                });
+                            fillResultTableWithMultipleValueResponse(streamResultTable, response);
+                        }
+                    });
+                }
             });
-            HandleMultipleValueResponseFromStream(response, request);
+            taskThread.start();
         }else {
-            SingleValueStreamResponseDTO response = new SingleValueStreamResponseDTO(
-                    data.getDevice(),
-                    data.getLocation(),
-                    ""
-            );
-            switch (request) {
-                case "average" -> response.setValue(operationController.getAverageTemperatureFromStream());
-                case "minimal" -> response.setValue(operationController.getMinimalTemperatureFromStream());
-                case "maximal" -> response.setValue(operationController.getMaximalTemperatureFromStream());
-                default -> throw new WrongRequestException("Unknown request: " + request);
-            }
-            HandleSingeValueResponseFromStream(response, request);
+            initializeStreamResultTableForSingleValueResponse(request);
+            Thread taskThread = new Thread(() -> {
+                while(!stopClicked){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            SingleValueStreamResponseDTO response = new SingleValueStreamResponseDTO(
+                                    data.getDevice(),
+                                    data.getLocation(),
+                                    ""
+                            );
+                            switch (request) {
+                                case "average" -> response.setValue(StreamService.getAverageTemperatureFromStream());
+                                case "minimal" -> response.setValue(StreamService.getMinimalTemperatureFromStream());
+                                case "maximal" -> response.setValue(StreamService.getMaximalTemperatureFromStream());
+                            }
+                            fillStreamResultTableWithSingleValueResponse(response);
+                        }
+                    });
+                }
+            });
+            taskThread.start();
         }
-    }
-    private void HandleMultipleValueResponseFromStream(MultipleValueResponseDTO response, String request) {
-        initializeResultTableForMultipleValueResponse(streamResultTable);
-        fillResultTableWithMultipleValueResponse(streamResultTable, response, request);
-    }
-    private void HandleSingeValueResponseFromStream(SingleValueStreamResponseDTO response, String valueType) {
-        initializeStreamResultTableForSingleValueResponse(valueType);
-        fillStreamResultTableWithSingleValueResponse(response);
     }
     private void initializeStreamResultTableForSingleValueResponse(String valueType) {
         streamResultTable.getColumns().clear();
@@ -290,13 +296,13 @@ public class ViewController{
         columnDefinitions.add(new TableColumn<>("Temperature"));
         table.getColumns().addAll(columnDefinitions);
     }
-    private void fillResultTableWithMultipleValueResponse(TableView table, MultipleValueResponseDTO response, String request) {
+    private void fillResultTableWithMultipleValueResponse(TableView table, ArrayList<TemperatureResponseDTO> response) {
         ObservableList<TemperatureResponseDTO> resultRowObservableList = FXCollections.observableArrayList();
-        resultRowObservableList.addAll(response.getValues());
-        ((TableColumn<MultipleValueResponseDTO, String>)table.getColumns().get(0)).setCellValueFactory(new PropertyValueFactory<>("dateAndTime"));
-        ((TableColumn<MultipleValueResponseDTO, String>)table.getColumns().get(1)).setCellValueFactory(new PropertyValueFactory<>("device"));
-        ((TableColumn<MultipleValueResponseDTO, String>)table.getColumns().get(2)).setCellValueFactory(new PropertyValueFactory<>("location"));
-        ((TableColumn<MultipleValueResponseDTO, String>)table.getColumns().get(3)).setCellValueFactory(new PropertyValueFactory<>("temperature"));
+        resultRowObservableList.addAll(response);
+        ((TableColumn<TemperatureResponseDTO, String>)table.getColumns().get(0)).setCellValueFactory(new PropertyValueFactory<>("dateAndTime"));
+        ((TableColumn<TemperatureResponseDTO, String>)table.getColumns().get(1)).setCellValueFactory(new PropertyValueFactory<>("device"));
+        ((TableColumn<TemperatureResponseDTO, String>)table.getColumns().get(2)).setCellValueFactory(new PropertyValueFactory<>("location"));
+        ((TableColumn<TemperatureResponseDTO, String>)table.getColumns().get(3)).setCellValueFactory(new PropertyValueFactory<>("temperature"));
         table.setItems(resultRowObservableList);
     }
 

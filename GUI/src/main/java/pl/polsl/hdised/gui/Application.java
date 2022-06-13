@@ -4,18 +4,35 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import pl.polsl.hdised.gui.controllers.OperationController;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.HttpHostConnectException;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
 
 public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
-        OperationController operationController = new OperationController();
-        if(operationController.isConnectionGood()){
+        if(isConnectionGood()){
             showStage(stage);
         }else{
             showConnectionErrorAlert();
+        }
+    }
+    public boolean isConnectionGood() {
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            HttpGet request = new HttpGet("http://localhost:8081/api/v1/query/devices");
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                return true;
+            }catch(HttpHostConnectException e){
+                System.out.println(e.getMessage());
+                return false;
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
