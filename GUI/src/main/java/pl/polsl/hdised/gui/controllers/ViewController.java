@@ -40,8 +40,11 @@ public class ViewController{
     //</editor-fold>
     //<editor-fold desc="Stream Result Table">
     public TableView streamResultTable;
+    public ChoiceBox streamRefreshRateChoiceBox;
     //</editor-fold>
     boolean stopClicked = false;
+    Thread streamListener;
+
 
     public void initialize(){
         fillAllChoiceBoxes();
@@ -206,58 +209,78 @@ public class ViewController{
     private void sendRequestWithDataToStreamAndHandleResponse(String request, StreamRequestDTO data) throws WrongRequestException {
         if(request.equals("all")) {
             initializeResultTableForMultipleValueResponse(streamResultTable);
-
-            Thread taskThread = new Thread(() -> {
-                while(!stopClicked){
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            ArrayList<TemperatureResponseDTO> response = StreamService.getAllTemperaturesFromStream();
-                            response.forEach(r ->{
-                                    r.setDevice(data.getDevice());
-                                    r.setLocation(data.getLocation());
-                                });
-                            fillResultTableWithMultipleValueResponse(streamResultTable, response);
-                        }
-                    });
-                }
-            });
-            taskThread.start();
+            if(streamListener != null && streamListener.isAlive()) streamListener.stop();
+            streamListener = getMultipleValueStreamListener(data);
+            streamListener.start();
         }else {
             initializeStreamResultTableForSingleValueResponse(request);
-            Thread taskThread = new Thread(() -> {
-                while(!stopClicked){
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            SingleValueStreamResponseDTO response = new SingleValueStreamResponseDTO(
-                                    data.getDevice(),
-                                    data.getLocation(),
-                                    ""
-                            );
-                            switch (request) {
-                                case "average" -> response.setValue(StreamService.getAverageTemperatureFromStream());
-                                case "minimal" -> response.setValue(StreamService.getMinimalTemperatureFromStream());
-                                case "maximal" -> response.setValue(StreamService.getMaximalTemperatureFromStream());
-                            }
-                            fillStreamResultTableWithSingleValueResponse(response);
-                        }
-                    });
-                }
-            });
+            Thread taskThread = getSingleValueThreadListener(request, data);
             taskThread.start();
         }
     }
+
+    private Thread getMultipleValueStreamListener(StreamRequestDTO data) {
+        return new Thread(() -> {
+            while (!stopClicked) {
+                try {
+                    Thread.sleep(getRefreshRateInMillisecondsFromJavaFXControls());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayList<TemperatureResponseDTO> response = StreamService.getAllTemperaturesFromStream();
+                        response.forEach(r -> {
+                            r.setDevice(data.getDevice());
+                            r.setLocation(data.getLocation());
+                        });
+                        fillResultTableWithMultipleValueResponse(streamResultTable, response);
+                    }
+                });
+            }
+        });
+    }
+
+    private Thread getSingleValueThreadListener(String value, StreamRequestDTO data) {
+        return new Thread(() -> {
+            while (!stopClicked) {
+                try {
+                    Thread.sleep(getRefreshRateInMillisecondsFromJavaFXControls());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        SingleValueStreamResponseDTO response = new SingleValueStreamResponseDTO(
+                                data.getDevice(),
+                                data.getLocation(),
+                                ""
+                        );
+                        switch (value) {
+                            case "average" -> response.setValue(StreamService.getAverageTemperatureFromStream());
+                            case "minimal" -> response.setValue(StreamService.getMinimalTemperatureFromStream());
+                            case "maximal" -> response.setValue(StreamService.getMaximalTemperatureFromStream());
+                        }
+                        fillStreamResultTableWithSingleValueResponse(response);
+                    }
+                });
+            }
+        });
+    }
+
+    private long getRefreshRateInMillisecondsFromJavaFXControls() {
+        String choiceBoxValue = (String) streamRefreshRateChoiceBox.getValue();
+        return switch (choiceBoxValue) {
+            case "100ms" -> 100;
+            case "500ms" -> 500;
+            case "2s" -> 2000;
+            case "5s" -> 5000;
+            default -> 1000;
+        };
+    }
+
     private void initializeStreamResultTableForSingleValueResponse(String valueType) {
         streamResultTable.getColumns().clear();
         ArrayList<TableColumn<SingleValueDatabaseResponseDTO, String>> columnDefinitions = new ArrayList<>();
