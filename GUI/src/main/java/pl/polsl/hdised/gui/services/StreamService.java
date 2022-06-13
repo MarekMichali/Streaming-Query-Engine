@@ -74,7 +74,7 @@ public class StreamService {
     public static ArrayList<TemperatureResponseDTO> getAllTemperaturesFromStream() {
         ArrayList<TemperatureResponseDTO> temperatureResponseDTOArrayList = new ArrayList<>();
 
-        StringBuilder stringBuilder = new StringBuilder(URL + "/stream/temperatures");
+        StringBuilder stringBuilder = new StringBuilder(URL + "/temperatures");
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpGet request = new HttpGet(stringBuilder.toString());
@@ -82,16 +82,23 @@ public class StreamService {
                 JSONArray temperatures = new JSONArray(EntityUtils.toString(httpResponse.getEntity()));
                 for (Object temperature : temperatures) {
                     TemperatureResponseDTO temperatureResponseDTO = new TemperatureResponseDTO();
+
                     String value = ((JSONObject) temperature).get("temperature").toString();
                     temperatureResponseDTO.setTemperature(value);
 
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.ENGLISH);
-                    Date dateTime = format.parse(((String) ((JSONObject) temperature).get("measureDate")).replace('T', ' '));
+                    Date dateTime = format.parse(((String) ((JSONObject) temperature).get("date")).replace('T', ' '));
                     LocalDateTime localDateTime = Instant.ofEpochMilli(dateTime.getTime())
                             .atZone(ZoneId.systemDefault())
                             .toLocalDateTime();
                     temperatureResponseDTO.setDateAndTime(localDateTime.toString());
-                    System.out.println(temperatureResponseDTOArrayList);
+
+                    String deviceId = ((JSONObject) temperature).get("deviceId").toString();
+                    temperatureResponseDTO.setDevice(deviceId);
+
+                    String location = ((JSONObject) temperature).get("cityName").toString();
+                    temperatureResponseDTO.setLocation(location);
+
                     temperatureResponseDTOArrayList.add(temperatureResponseDTO);
                 }
             }

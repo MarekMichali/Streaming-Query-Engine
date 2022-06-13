@@ -146,7 +146,7 @@ public class ViewController{
     }
     private void HandleMultipleValueResponseFromDatabase(ArrayList<TemperatureResponseDTO> response, String request) {
         initializeResultTableForMultipleValueResponse(databaseResultTable);
-        fillResultTableWithMultipleValueResponse(databaseResultTable, response);
+        addMultipleValueResponseToResultTable(databaseResultTable, response);
     }
     private void HandleSingeValueResponseFromDatabase(SingleValueDatabaseResponseDTO response, String valueType) {
         initializeDatabaseResultTableForSingleValueResponse(valueType);
@@ -174,6 +174,7 @@ public class ViewController{
     }
 
     public void setQueryParametersClicked(ActionEvent actionEvent) {
+        streamResultTable.getItems().clear();
         StreamRequestDTO data = getStreamRequestDTOFromJavaFXControls();
         try {
             StreamService.setStreamQueryParameters(data.getDevice(),data.getLocation());
@@ -209,7 +210,6 @@ public class ViewController{
     private void sendRequestWithDataToStreamAndHandleResponse(String request, StreamRequestDTO data) throws WrongRequestException {
         if(request.equals("all")) {
             initializeResultTableForMultipleValueResponse(streamResultTable);
-            if(streamListener != null && streamListener.isAlive()) streamListener.stop();
             streamListener = getMultipleValueStreamListener(data);
             streamListener.start();
         }else {
@@ -235,7 +235,7 @@ public class ViewController{
                             r.setDevice(data.getDevice());
                             r.setLocation(data.getLocation());
                         });
-                        fillResultTableWithMultipleValueResponse(streamResultTable, response);
+                        addMultipleValueResponseToResultTable(streamResultTable, response);
                     }
                 });
             }
@@ -319,14 +319,15 @@ public class ViewController{
         columnDefinitions.add(new TableColumn<>("Temperature"));
         table.getColumns().addAll(columnDefinitions);
     }
-    private void fillResultTableWithMultipleValueResponse(TableView table, ArrayList<TemperatureResponseDTO> response) {
+    private void addMultipleValueResponseToResultTable(TableView table, ArrayList<TemperatureResponseDTO> response) {
         ObservableList<TemperatureResponseDTO> resultRowObservableList = FXCollections.observableArrayList();
         resultRowObservableList.addAll(response);
         ((TableColumn<TemperatureResponseDTO, String>)table.getColumns().get(0)).setCellValueFactory(new PropertyValueFactory<>("dateAndTime"));
         ((TableColumn<TemperatureResponseDTO, String>)table.getColumns().get(1)).setCellValueFactory(new PropertyValueFactory<>("device"));
         ((TableColumn<TemperatureResponseDTO, String>)table.getColumns().get(2)).setCellValueFactory(new PropertyValueFactory<>("location"));
         ((TableColumn<TemperatureResponseDTO, String>)table.getColumns().get(3)).setCellValueFactory(new PropertyValueFactory<>("temperature"));
-        table.setItems(resultRowObservableList);
+        table.getItems().addAll(resultRowObservableList);
+        table.scrollTo(table.getItems().size()-1);
     }
 
     public void stopClicked(ActionEvent actionEvent) {
