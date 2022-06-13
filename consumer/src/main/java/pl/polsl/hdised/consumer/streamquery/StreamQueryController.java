@@ -4,6 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.polsl.hdised.consumer.exception.EmptyMeasurementsException;
 import pl.polsl.hdised.consumer.exception.ParametersNotFoundException;
+import pl.polsl.hdised.consumer.measurement.MeasurementDto;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/query/stream")
@@ -35,6 +38,11 @@ public class StreamQueryController {
     @GetMapping("/maximum-temperature")
     public Float getStreamMaximumTemperature() throws EmptyMeasurementsException {
         return this.streamQueryService.getStreamMaximumTemperature();
+    }
+
+    @GetMapping("/temperatures")
+    public List<Object> getMeasurements(){
+        return this.streamQueryService.getMeasurements();
     }
 
 
