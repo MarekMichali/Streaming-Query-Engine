@@ -1,11 +1,28 @@
 package pl.polsl.hdised.consumer.limitedqueue;
 
+import pl.polsl.hdised.consumer.measurement.MeasurementDto;
+
 import java.util.*;
 
-public class LimitedQueue<MeasurementDto> implements Queue<MeasurementDto> {
+public class LimitedQueue implements Queue<MeasurementDto> {
 
-    Queue<MeasurementDto> measurementDtos = new ArrayDeque<>();
     private final Short MAX_CAPACITY = 20;
+    Queue<MeasurementDto> measurementDtos = new ArrayDeque<>();
+    private Float maximumTemperature = Float.MIN_VALUE;
+    private Float minimumTemperature = Float.MAX_VALUE;
+    private Float sum = 0.0f;
+
+    public Float getMaximumTemperature() {
+        return maximumTemperature;
+    }
+
+    public Float getMinimumTemperature() {
+        return minimumTemperature;
+    }
+
+    public Float getAverageTemperature() {
+        return this.sum / this.measurementDtos.size();
+    }
 
     @Override
     public int size() {
@@ -39,9 +56,19 @@ public class LimitedQueue<MeasurementDto> implements Queue<MeasurementDto> {
 
     @Override
     public boolean add(MeasurementDto measurementDto) {
-        if(this.measurementDtos.size() == this.MAX_CAPACITY){
-            this.measurementDtos.remove();
+        Objects.requireNonNull(measurementDto, "Measurement Cannot be null");
+
+        if (measurementDto.getTemperature() > this.maximumTemperature) {
+            this.maximumTemperature = measurementDto.getTemperature();
         }
+        if (measurementDto.getTemperature() < this.minimumTemperature) {
+            this.minimumTemperature = measurementDto.getTemperature();
+        }
+
+        if (this.measurementDtos.size() == this.MAX_CAPACITY) {
+            this.sum -= this.measurementDtos.remove().getTemperature();
+        }
+        this.sum += measurementDto.getTemperature();
         return this.measurementDtos.add(measurementDto);
     }
 

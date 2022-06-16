@@ -50,10 +50,7 @@ public class StreamQueryService {
 
     public Float getStreamAverage() throws EmptyMeasurementsException {
         StreamQuery streamQuery = StreamQuery.getInstance();
-        if (Objects.equals(streamQuery.getTemperaturesCount(), 0)) {
-            throw new EmptyMeasurementsException();
-        }
-        return streamQuery.getTemperaturesSum() / streamQuery.getTemperaturesCount();
+        return streamQuery.getAverageTemperature();
     }
 
     public void UpdateQuery(MeasurementDto measurementDto) {
@@ -116,21 +113,15 @@ public class StreamQueryService {
 
     public Float getStreamMinimumTemperature() throws EmptyMeasurementsException {
         StreamQuery streamQuery = StreamQuery.getInstance();
-        if (Objects.equals(streamQuery.getTemperaturesCount(), 0)) {
-            throw new EmptyMeasurementsException();
-        }
         return streamQuery.getMinimumTemperature();
     }
 
     public Float getStreamMaximumTemperature() throws EmptyMeasurementsException {
         StreamQuery streamQuery = StreamQuery.getInstance();
-        if (Objects.equals(streamQuery.getTemperaturesCount(), 0)) {
-            throw new EmptyMeasurementsException();
-        }
         return streamQuery.getMaximumTemperature();
     }
 
-    public List<Object> getMeasurements(){
+    public List<Object> getMeasurements() {
         return StreamQuery.getInstance().getMeasurements();
     }
 }
