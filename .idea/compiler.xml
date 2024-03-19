@@ -8,14 +8,11 @@
         <outputRelativeToContentRoot value="true" />
         <module name="measurement-generator" />
         <module name="engine" />
-        <module name="GUI" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="consumer" target="17" />
-      <module name="engine" target="17" />
       <module name="GUI" target="17" />
-      <module name="measurement-generator" target="17" />
       <module name="product-producer" target="17" />
       <module name="Stream-Query-Engine" target="17" />
     </bytecodeTargetLevel>

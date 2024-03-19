@@ -5,19 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>Stream-Query-Engine</artifactId>
+    <artifactId>Streaming-Query-Engine</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>measurement-generator</module>
-        <module>GUI</module>
+        <module>engine</module>
     </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spring.boot.maven.plugin.version>2.7.0</spring.boot.maven.plugin.version>
-        <spring.boot.dependecies.version>2.7.0</spring.boot.dependecies.version>
+        <spring.boot.version>2.7.0</spring.boot.version>
     </properties>
 
     <dependencyManagement>
@@ -25,7 +24,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring.boot.dependecies.version}</version>
+                <version>${spring.boot.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -58,7 +57,7 @@
                 <plugin>
                     <groupId>com.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring.boot.maven.plugin.version}</version>
+                    <version>${spring.boot.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GUI/GUI.iml" filepath="$PROJECT_DIR$/GUI/GUI.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Stream-Query-Engine.iml" filepath="$PROJECT_DIR$/Stream-Query-Engine.iml" />
-      <module fileurl="file://$PROJECT_DIR$/engine/engine.iml" filepath="$PROJECT_DIR$/engine/engine.iml" />
       <module fileurl="file://$PROJECT_DIR$/measurement-generator/measurement-generator.iml" filepath="$PROJECT_DIR$/measurement-generator/measurement-generator.iml" />
     </modules>
   </component>
