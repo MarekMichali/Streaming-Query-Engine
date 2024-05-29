@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	kafka "github.com/segmentio/kafka-go"
 )
@@ -13,8 +14,9 @@ func newKafkaWriter(kafkaURL string) *kafka.Writer {
 }
 
 func main() {
+	kafkaURL := os.Getenv("KAFKA_SERVER")
 	fmt.Println("Listening on port 8085")
-	writer := newKafkaWriter("kafka:9092")
+	writer := newKafkaWriter(kafkaURL)
 	defer writer.Close()
 
 	service := NewMeasurementService(NewMeasurementCreator(writer))
