@@ -20,7 +20,7 @@ services:
     build: ./golang-measurement-generator/
     container_name: golang-measurement-generator
     ports:
-      - "8085:8080"
+      - "8085:8085"
     env_file:
       - .env
     networks:
