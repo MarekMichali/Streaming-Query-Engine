@@ -27,15 +27,17 @@ services:
       - hdised
 
   database:
+    build: ./postgres-config/
     container_name: database
-    image: 'postgres:latest'
+    volumes:
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
     ports:
       - "5432:5432"
     env_file:
       - .env
     networks:
       - hdised
-
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
   zookeeper:
     container_name: zookeeper
     image: 'bitnami/zookeeper:latest'
@@ -55,6 +57,14 @@ services:
       - .env
     depends_on:
       - zookeeper
+    networks:
+      - hdised
+
+  pmm-monitoring:
+    container_name: pmm-monitoring
+    image: 'percona/pmm-server:2.41.2'
+    ports:
+      - '443:443'
     networks:
       - hdised
 
