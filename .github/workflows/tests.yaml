@@ -1,0 +1,15 @@
+name: Run Docker Compose and Test Endpoints
+
+on:
+    workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Start Docker Compose
+      run: docker-compose -f docker-compose-go.yaml up -d
