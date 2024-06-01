@@ -11,5 +11,19 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v4
 
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '21'
+        cache: maven
+
+    - name: Build with Maven
+      run: |
+        cd engine
+        mvn clean package
+
     - name: Start Docker Compose
-      run: docker-compose -f docker-compose-go.yaml up -d
+      run: |
+        cd ..
+        docker-compose -f docker-compose-go.yaml up -d
