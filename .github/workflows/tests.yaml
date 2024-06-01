@@ -25,5 +25,4 @@ jobs:
 
     - name: Start Docker Compose
       run: |
-        cd ..
         docker-compose -f docker-compose-go.yaml up -d
