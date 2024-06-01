@@ -31,4 +31,4 @@ jobs:
       run: |
         sleep 30
         docker ps
-        curl -v -X POST http://golang-measurement-generator:8085/api/v1/measurements/start-producing-to-database 
+        curl -v -X POST localhost:8085/api/v1/measurements/start-producing-to-database 

@@ -60,13 +60,13 @@ services:
     networks:
       - hdised
 
-  pmm-monitoring:
-    container_name: pmm-monitoring
-    image: 'percona/pmm-server:2.41.2'
-    ports:
-      - '443:443'
-    networks:
-      - hdised
+ # pmm-monitoring:
+ #   container_name: pmm-monitoring
+ #   image: 'percona/pmm-server:2.41.2'
+ #   ports:
+ #     - '443:443'
+ #   networks:
+ #     - hdised
 
 volumes:
   hdised:
