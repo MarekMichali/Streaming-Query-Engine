@@ -26,3 +26,8 @@ jobs:
     - name: Start Docker Compose
       run: |
         docker-compose -f docker-compose-go.yaml up -d
+
+    - name: Test Endpoints
+      run: |
+        sleep 30
+        curl -v -X POST golang-measurement-generator:8085/api/v1/measurements/start-producing-to-database 
