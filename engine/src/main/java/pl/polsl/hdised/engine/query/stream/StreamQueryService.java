@@ -1,21 +1,20 @@
-package pl.polsl.hdised.engine.streamquery;
-
-import org.springframework.stereotype.Service;
-import pl.polsl.hdised.engine.date.DateEntity;
-import pl.polsl.hdised.engine.date.DateRepository;
-import pl.polsl.hdised.engine.device.DeviceEntity;
-import pl.polsl.hdised.engine.device.DeviceRepository;
-import pl.polsl.hdised.engine.exception.EmptyMeasurementsException;
-import pl.polsl.hdised.engine.exception.ParametersNotFoundException;
-import pl.polsl.hdised.engine.location.LocationEntity;
-import pl.polsl.hdised.engine.location.LocationRepository;
-import pl.polsl.hdised.engine.measurement.MeasurementDto;
-import pl.polsl.hdised.engine.measurement.MeasurementEntity;
-import pl.polsl.hdised.engine.measurement.MeasurementRepository;
+package pl.polsl.hdised.engine.query.stream;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.stereotype.Service;
+import pl.polsl.hdised.engine.date.DateEntity;
+import pl.polsl.hdised.engine.date.DateRepository;
+import pl.polsl.hdised.engine.device.DeviceRepository;
+import pl.polsl.hdised.engine.device.model.DeviceEntity;
+import pl.polsl.hdised.engine.exception.EmptyMeasurementsException;
+import pl.polsl.hdised.engine.exception.ParametersNotFoundException;
+import pl.polsl.hdised.engine.location.LocationRepository;
+import pl.polsl.hdised.engine.location.model.LocationEntity;
+import pl.polsl.hdised.engine.measurement.MeasurementRepository;
+import pl.polsl.hdised.engine.measurement.model.MeasurementDto;
+import pl.polsl.hdised.engine.measurement.model.MeasurementEntity;
 
 @Service
 public class StreamQueryService {

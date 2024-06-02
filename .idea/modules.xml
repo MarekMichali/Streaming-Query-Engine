@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Streaming-Query-Engine.iml" filepath="$PROJECT_DIR$/Streaming-Query-Engine.iml" />
       <module fileurl="file://$PROJECT_DIR$/engine/engine.iml" filepath="$PROJECT_DIR$/engine/engine.iml" />
-      <module fileurl="file://$PROJECT_DIR$/measurement-generator/measurement-generator.iml" filepath="$PROJECT_DIR$/measurement-generator/measurement-generator.iml" />
     </modules>
   </component>
 </project>

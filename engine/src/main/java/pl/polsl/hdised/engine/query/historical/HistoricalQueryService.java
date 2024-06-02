@@ -1,23 +1,22 @@
-package pl.polsl.hdised.engine.historicalquery;
+package pl.polsl.hdised.engine.query.historical;
 
 
-import org.springframework.stereotype.Service;
-import pl.polsl.hdised.engine.device.DeviceDto;
-import pl.polsl.hdised.engine.device.DeviceEntity;
-import pl.polsl.hdised.engine.device.DeviceRepository;
-import pl.polsl.hdised.engine.exception.ParametersNotFoundException;
-import pl.polsl.hdised.engine.location.LocationDto;
-import pl.polsl.hdised.engine.location.LocationEntity;
-import pl.polsl.hdised.engine.location.LocationRepository;
-import pl.polsl.hdised.engine.measurement.MeasurementRepository;
-import pl.polsl.hdised.engine.temperatureResponse.TemperatureResponseDto;
-
-import javax.persistence.Tuple;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+import javax.persistence.Tuple;
+import org.springframework.stereotype.Service;
+import pl.polsl.hdised.engine.device.DeviceRepository;
+import pl.polsl.hdised.engine.device.model.DeviceDto;
+import pl.polsl.hdised.engine.device.model.DeviceEntity;
+import pl.polsl.hdised.engine.exception.ParametersNotFoundException;
+import pl.polsl.hdised.engine.location.LocationRepository;
+import pl.polsl.hdised.engine.location.model.LocationDto;
+import pl.polsl.hdised.engine.location.model.LocationEntity;
+import pl.polsl.hdised.engine.measurement.MeasurementRepository;
+import pl.polsl.hdised.engine.measurement.model.TemperatureResponseDto;
 
 @Service
 public class HistoricalQueryService {

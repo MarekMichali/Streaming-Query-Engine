@@ -1,14 +1,13 @@
-package pl.polsl.hdised.engine.historicalquery;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import pl.polsl.hdised.engine.device.DeviceDto;
-import pl.polsl.hdised.engine.exception.ParametersNotFoundException;
-import pl.polsl.hdised.engine.location.LocationDto;
-import pl.polsl.hdised.engine.temperatureResponse.TemperatureResponseDto;
+package pl.polsl.hdised.engine.query.historical;
 
 import java.text.ParseException;
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import pl.polsl.hdised.engine.device.model.DeviceDto;
+import pl.polsl.hdised.engine.exception.ParametersNotFoundException;
+import pl.polsl.hdised.engine.location.model.LocationDto;
+import pl.polsl.hdised.engine.measurement.model.TemperatureResponseDto;
 
 @RequestMapping("api/v1/query/historical")
 @RestController

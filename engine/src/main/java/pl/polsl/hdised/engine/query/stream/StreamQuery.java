@@ -1,12 +1,11 @@
-package pl.polsl.hdised.engine.streamquery;
-
-import pl.polsl.hdised.engine.exception.EmptyMeasurementsException;
-import pl.polsl.hdised.engine.limitedqueue.LimitedQueue;
-import pl.polsl.hdised.engine.measurement.MeasurementDto;
+package pl.polsl.hdised.engine.query.stream;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import pl.polsl.hdised.engine.exception.EmptyMeasurementsException;
+import pl.polsl.hdised.engine.queue.LimitedQueue;
+import pl.polsl.hdised.engine.measurement.model.MeasurementDto;
 
 public final class StreamQuery {
 
