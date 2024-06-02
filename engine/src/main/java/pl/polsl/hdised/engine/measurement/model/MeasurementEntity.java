@@ -1,6 +1,5 @@
 package pl.polsl.hdised.engine.measurement.model;
 
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.*;
 import pl.polsl.hdised.engine.date.DateEntity;
@@ -49,7 +48,7 @@ public class MeasurementEntity implements Exportable {
   }
 
   @Override
-  public Collection<String> getColumns() {
+  public List<String> getColumns() {
     return List.of(
         locationEntity.getCity(),
         deviceEntity.getDeviceId(),
@@ -59,7 +58,7 @@ public class MeasurementEntity implements Exportable {
   }
 
   @Override
-  public Collection<String> getHeadersRow() {
+  public List<String> getHeadersRow() {
     return List.of("Miasto", "Id urzadzenia", "Temperatura", "Jednostka", "Data pomiaru");
   }
 }

@@ -1,9 +1,9 @@
 package pl.polsl.hdised.engine.measurement.export.model;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface Exportable {
-  Collection<String> getColumns();
+  List<String> getColumns();
 
-  Collection<String> getHeadersRow();
+  List<String> getHeadersRow();
 }

@@ -1,5 +1,6 @@
 package pl.polsl.hdised.engine.measurement.export;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,7 +30,7 @@ public class MeasurementExportService {
       String location,
       String stringStartDate,
       String stringFinishDate)
-      throws ParseException {
+      throws ParseException, IOException {
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.ENGLISH);
     Date startDate = format.parse(stringStartDate + ":00.000");
     Date finishDate = format.parse(stringFinishDate + ":00.000");
