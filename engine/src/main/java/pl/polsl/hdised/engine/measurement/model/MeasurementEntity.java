@@ -1,13 +1,15 @@
 package pl.polsl.hdised.engine.measurement.model;
 
+import java.util.Collection;
+import java.util.List;
+import javax.persistence.*;
 import pl.polsl.hdised.engine.date.DateEntity;
 import pl.polsl.hdised.engine.device.model.DeviceEntity;
 import pl.polsl.hdised.engine.location.model.LocationEntity;
-
-import javax.persistence.*;
+import pl.polsl.hdised.engine.measurement.export.model.Exportable;
 
 @Entity(name = "Measurement")
-public class MeasurementEntity {
+public class MeasurementEntity implements Exportable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,5 +46,20 @@ public class MeasurementEntity {
     this.dateEntity = dateEntity;
     this.unit = unit;
     this.temperature = temperature;
+  }
+
+  @Override
+  public Collection<String> getColumns() {
+    return List.of(
+        locationEntity.getCity(),
+        deviceEntity.getDeviceId(),
+        temperature.toString(),
+        unit,
+        dateEntity.getScanDate().toString());
+  }
+
+  @Override
+  public Collection<String> getHeadersRow() {
+    return List.of("Miasto", "Id urzadzenia", "Temperatura", "Jednostka", "Data pomiaru");
   }
 }

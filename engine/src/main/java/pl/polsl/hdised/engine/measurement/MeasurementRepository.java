@@ -1,13 +1,12 @@
 package pl.polsl.hdised.engine.measurement;
 
+import java.util.Date;
+import java.util.List;
+import javax.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import pl.polsl.hdised.engine.measurement.model.MeasurementEntity;
-
-import javax.persistence.Tuple;
-import java.util.Date;
-import java.util.List;
 
 public interface MeasurementRepository extends JpaRepository<MeasurementEntity, Long> {
 
@@ -82,4 +81,11 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
       @Param("location") String location,
       @Param("startDate") Date startDate,
       @Param("finishDate") Date finishDate);
+
+  List<MeasurementEntity>
+      getAllByDateEntityScanDateBetweenAndDeviceEntityDeviceIdAndLocationEntity_City(
+          Date dateEntity_scanDate,
+          Date dateEntity_scanDate2,
+          String deviceEntity_deviceId,
+          String locationEntity_city);
 }

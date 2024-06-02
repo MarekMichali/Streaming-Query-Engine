@@ -1,7 +1,7 @@
 package pl.polsl.hdised.engine.date;
 
-import javax.persistence.*;
 import java.util.Date;
+import javax.persistence.*;
 
 @Entity(name = "Date")
 public class DateEntity {
@@ -17,5 +17,9 @@ public class DateEntity {
 
   public DateEntity(Date scanDate) {
     this.scanDate = scanDate;
+  }
+
+  public Date getScanDate() {
+    return scanDate;
   }
 }
