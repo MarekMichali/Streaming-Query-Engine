@@ -57,7 +57,7 @@ jobs:
 
     - name: Start stream producing
       run: |
-        curl -X POST 'localhost:8080/api/v1/query/stream/query-parameters'
+        curl -X POST 'localhost:8085/api/v1/measurements/start-stream-producing'
         sleep 30
 
     - name: Set query parameters
