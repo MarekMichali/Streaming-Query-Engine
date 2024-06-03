@@ -32,7 +32,7 @@ jobs:
         sleep 10
         docker ps
         curl -X POST 'localhost:8085/api/v1/measurements/start-producing-to-database'
-        sleep 15
+        sleep 30
 
     - name: Stop producing
       run: curl -X POST 'localhost:8085/api/v1/measurements/stop-producing'
@@ -58,7 +58,7 @@ jobs:
     - name: Start stream producing
       run: |
         curl -X POST 'localhost:8080/api/v1/query/stream/query-parameters'
-        sleep 15
+        sleep 30
 
     - name: Set query parameters
       run: curl -X POST 'localhost:8080/api/v1/query/stream/query-parameters?deviceId=dev01&location=Katowice'
