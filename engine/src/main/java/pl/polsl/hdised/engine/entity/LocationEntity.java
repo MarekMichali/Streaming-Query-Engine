@@ -1,4 +1,4 @@
-package pl.polsl.hdised.engine.location.model;
+package pl.polsl.hdised.engine.entity;
 
 import javax.persistence.*;
 

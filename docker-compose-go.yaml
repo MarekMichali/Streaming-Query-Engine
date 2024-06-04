@@ -27,17 +27,35 @@ services:
       - hdised
 
   database:
-    build: ./postgres-config/
+    image: 'bitnami/postgresql:latest'
     container_name: database
-    volumes:
-      - ./postgresql.conf:/etc/postgresql/postgresql.conf
     ports:
       - "5432:5432"
-    env_file:
-      - .env
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=user
+      - POSTGRESQL_REPLICATION_PASSWORD=password
+      - POSTGRESQL_PASSWORD=password
     networks:
       - hdised
-    command: [ "postgres", "-c", "config_file=/etc/postgresql/postgresql.conf" ]
+
+  database-replica:
+    image: 'bitnami/postgresql:latest'
+    container_name: database-replica
+    ports:
+      - "5433:5432"
+    depends_on:
+      - database
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_MASTER_HOST=database
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - POSTGRESQL_REPLICATION_USER=user
+      - POSTGRESQL_REPLICATION_PASSWORD=password
+      - POSTGRESQL_PASSWORD=password
+    networks:
+      - hdised
+
   zookeeper:
     container_name: zookeeper
     image: 'bitnami/zookeeper:latest'
@@ -59,14 +77,13 @@ services:
       - zookeeper
     networks:
       - hdised
-
-   pmm-monitoring:
-     container_name: pmm-monitoring
-     image: 'percona/pmm-server:2.41.2'
-     ports:
-       - '443:443'
-     networks:
-       - hdised
+  pmm-monitoring:
+    container_name: pmm-monitoring
+    image: 'percona/pmm-server:2.41.2'
+    ports:
+      - '443:443'
+    networks:
+      - hdised
 
 volumes:
   hdised:

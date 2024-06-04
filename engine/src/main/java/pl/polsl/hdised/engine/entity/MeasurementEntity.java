@@ -1,10 +1,8 @@
-package pl.polsl.hdised.engine.measurement.model;
+package pl.polsl.hdised.engine.entity;
 
 import java.util.List;
 import javax.persistence.*;
-import pl.polsl.hdised.engine.date.DateEntity;
-import pl.polsl.hdised.engine.device.model.DeviceEntity;
-import pl.polsl.hdised.engine.location.model.LocationEntity;
+
 import pl.polsl.hdised.engine.measurement.export.model.Exportable;
 
 @Entity(name = "Measurement")

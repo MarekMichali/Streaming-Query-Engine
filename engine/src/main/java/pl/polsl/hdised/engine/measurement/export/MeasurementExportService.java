@@ -7,10 +7,10 @@ import java.util.Date;
 import java.util.Locale;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import pl.polsl.hdised.engine.measurement.MeasurementRepository;
+import pl.polsl.hdised.engine.entity.MeasurementEntity;
 import pl.polsl.hdised.engine.measurement.export.model.FileExtension;
 import pl.polsl.hdised.engine.measurement.export.strategy.ExportStrategyContext;
-import pl.polsl.hdised.engine.measurement.model.MeasurementEntity;
+import pl.polsl.hdised.engine.repository.MeasurementRepository;
 
 @Service
 public class MeasurementExportService {

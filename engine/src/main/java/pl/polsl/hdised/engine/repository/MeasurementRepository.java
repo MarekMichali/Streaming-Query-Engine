@@ -1,4 +1,4 @@
-package pl.polsl.hdised.engine.measurement;
+package pl.polsl.hdised.engine.repository;
 
 import java.util.Date;
 import java.util.List;
@@ -6,7 +6,7 @@ import javax.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import pl.polsl.hdised.engine.measurement.model.MeasurementEntity;
+import pl.polsl.hdised.engine.entity.MeasurementEntity;
 
 public interface MeasurementRepository extends JpaRepository<MeasurementEntity, Long> {
 
