@@ -27,52 +27,52 @@ jobs:
         run: |
           docker-compose -f docker-compose-go.yaml up -d
 
-    - name: Start producing to database
-      run: |
-        sleep 10
-        docker ps
-        curl -X POST 'localhost:8085/api/v1/measurements/start-producing-to-database'
-        sleep 60
+      - name: Start producing to database
+        run: |
+          sleep 10
+          docker ps
+          curl -X POST 'localhost:8085/api/v1/measurements/start-producing-to-database'
+          sleep 60
 
-    - name: Stop producing
-      run: curl -X POST 'localhost:8085/api/v1/measurements/stop-producing'
+      - name: Stop producing
+        run: curl -X POST 'localhost:8085/api/v1/measurements/stop-producing'
 
-    - name: Get historical locations
-      run: curl -X GET 'localhost:8080/api/v1/query/historical/locations'
+      - name: Get historical locations
+        run: curl -X GET 'localhost:8080/api/v1/query/historical/locations'
 
-    - name: Get historical devices
-      run: curl -X GET 'localhost:8080/api/v1/query/historical/devices'
+      - name: Get historical devices
+        run: curl -X GET 'localhost:8080/api/v1/query/historical/devices'
 
-    - name: Get historical average temperature
-      run: curl -X GET 'localhost:8080/api/v1/query/historical/average?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2099-12-01%2000%3A01'
+      - name: Get historical average temperature
+        run: curl -X GET 'localhost:8080/api/v1/query/historical/average?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2099-12-01%2000%3A01'
 
-    - name: Get historical temperatures
-      run: curl -X GET 'localhost:8080/api/v1/query/historical/temperatures?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2024-12-01%2000%3A01'
+      - name: Get historical temperatures
+        run: curl -X GET 'localhost:8080/api/v1/query/historical/temperatures?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2024-12-01%2000%3A01'
 
-    - name: Get historical minimum temperature
-      run: curl -X GET 'localhost:8080/api/v1/query/historical/minimum-temperature?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2024-12-01%2000%3A01'
+      - name: Get historical minimum temperature
+        run: curl -X GET 'localhost:8080/api/v1/query/historical/minimum-temperature?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2024-12-01%2000%3A01'
 
-    - name: Get historical maximum temperature
-      run: curl -X GET 'localhost:8080/api/v1/query/historical/maximum-temperature?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2024-12-01%2000%3A01'
+      - name: Get historical maximum temperature
+        run: curl -X GET 'localhost:8080/api/v1/query/historical/maximum-temperature?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2024-12-01%2000%3A01'
 
-    - name: Start stream producing
-      run: |
-        curl -X POST 'localhost:8085/api/v1/measurements/start-stream-producing'
-        sleep 15
+      - name: Start stream producing
+        run: |
+          curl -X POST 'localhost:8085/api/v1/measurements/start-stream-producing'
+          sleep 15
 
-    - name: Set query parameters
-      run: |
-        curl -X POST 'localhost:8080/api/v1/query/stream/query-parameters?deviceId=dev01&location=Katowice'
-        sleep 30
+      - name: Set query parameters
+        run: |
+          curl -X POST 'localhost:8080/api/v1/query/stream/query-parameters?deviceId=dev01&location=Katowice'
+          sleep 30
 
-    - name: Get average temperature
-      run: curl -X GET 'localhost:8080/api/v1/query/stream/average-temperature'
+      - name: Get average temperature
+        run: curl -X GET 'localhost:8080/api/v1/query/stream/average-temperature'
 
-    - name: Get minimum temperature
-      run: curl -X GET 'localhost:8080/api/v1/query/stream/minimum-temperature'
+      - name: Get minimum temperature
+        run: curl -X GET 'localhost:8080/api/v1/query/stream/minimum-temperature'
 
-    - name: Get maximum temperature
-      run: curl -X GET 'localhost:8080/api/v1/query/stream/maximum-temperature'
+      - name: Get maximum temperature
+        run: curl -X GET 'localhost:8080/api/v1/query/stream/maximum-temperature'
 
-    - name: Get temperatures
-      run: curl -X GET 'localhost:8080/api/v1/query/stream/temperatures'
+      - name: Get temperatures
+        run: curl -X GET 'localhost:8080/api/v1/query/stream/temperatures'
