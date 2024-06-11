@@ -55,6 +55,15 @@ jobs:
       - name: Get historical maximum temperature
         run: curl -X GET 'localhost:8080/api/v1/query/historical/maximum-temperature?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2024-12-01%2000%3A01'
 
+      - name: Export historical data to TXT
+        run: curl -X GET 'http://localhost:8080/api/v1/measurements/export?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2099-12-01%2000%3A01&extension=TXT'
+      
+      - name: Export historical data to CSV
+        run: curl -X GET 'http://localhost:8080/api/v1/measurements/export?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2099-12-01%2000%3A01&extension=CSV'
+
+      - name: Export historical data to XLSX
+        run: curl -X GET 'http://localhost:8080/api/v1/measurements/export?deviceId=dev01&location=Katowice&startDate=2024-01-01%2000%3A01&finishDate=2099-12-01%2000%3A01&extension=XLSX'
+
       - name: Start stream producing
         run: |
           curl -X POST 'localhost:8085/api/v1/measurements/start-stream-producing'
