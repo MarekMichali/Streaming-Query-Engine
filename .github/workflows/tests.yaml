@@ -25,7 +25,7 @@ jobs:
 
       - name: Start Docker Compose
         run: |
-          docker-compose -f docker-compose-go.yaml up -d
+          docker-compose -f docker-compose-monitoring.yaml up -d
 
       - name: Start producing to database
         run: |
