@@ -1,4 +1,4 @@
-package pl.polsl.hdised.engine.date;
+package pl.polsl.hdised.engine.entity;
 
 import java.util.Date;
 import javax.persistence.*;

@@ -1,20 +1,20 @@
-package pl.polsl.hdised.engine.location;
+package pl.polsl.hdised.engine.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pl.polsl.hdised.engine.location.model.LocationEntity;
+import pl.polsl.hdised.engine.entity.DeviceEntity;
 
 @Repository
-public interface LocationRepository extends JpaRepository<LocationEntity, Long> {
+public interface DeviceRepository extends JpaRepository<DeviceEntity, Long> {
 
   @Query(
       value =
           "SELECT DISTINCT * \n"
-              + "FROM location\n"
-              + "WHERE location.city = :city\n"
+              + "FROM device\n"
+              + "WHERE device.device_id = :deviceId\n"
               + "LIMIT 1\n",
       nativeQuery = true)
-  LocationEntity findLocationByCity(@Param("city") String city);
+  DeviceEntity findDeviceById(@Param("deviceId") String deviceId);
 }

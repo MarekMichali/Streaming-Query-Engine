@@ -1,4 +1,4 @@
-package pl.polsl.hdised.engine.device.model;
+package pl.polsl.hdised.engine.entity;
 
 import javax.persistence.*;
 
