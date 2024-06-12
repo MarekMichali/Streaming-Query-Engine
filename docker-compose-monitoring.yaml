@@ -12,7 +12,7 @@ services:
     env_file:
       - .env
     networks:
-      - hdised
+      - zbdihd
 
   golang-measurement-generator:
     depends_on:
@@ -24,7 +24,7 @@ services:
     env_file:
       - .env
     networks:
-      - hdised
+      - zbdihd
 
   database:
     build: ./postgres-config/
@@ -36,7 +36,7 @@ services:
     env_file:
       - .env
     networks:
-      - hdised
+      - zbdihd
     command: [ "postgres", "-c", "config_file=/etc/postgresql/postgresql.conf" ]
   zookeeper:
     container_name: zookeeper
@@ -46,7 +46,7 @@ services:
     env_file:
       - .env
     networks:
-      - hdised
+      - zbdihd
 
   kafka:
     container_name: kafka
@@ -58,7 +58,7 @@ services:
     depends_on:
       - zookeeper
     networks:
-      - hdised
+      - zbdihd
 
   pmm-monitoring:
     container_name: pmm-monitoring
@@ -66,11 +66,11 @@ services:
     ports:
       - '443:443'
     networks:
-      - hdised
+      - zbdihd
 
 volumes:
-  hdised:
+  zbdihd:
 
 networks:
-  hdised:
+  zbdihd:
     driver: bridge

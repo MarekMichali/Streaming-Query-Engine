@@ -12,7 +12,7 @@ services:
     env_file:
       - .env
     networks:
-      - hdised
+      - zbdihd
 
   golang-measurement-generator:
     depends_on:
@@ -24,10 +24,10 @@ services:
     env_file:
       - .env
     networks:
-      - hdised
+      - zbdihd
 
   database:
-    image: 'bitnami/postgresql:latest'
+    image: 'bitnami/postgresql:16.0.0'
     container_name: database
     ports:
       - "5432:5432"
@@ -37,10 +37,10 @@ services:
       - POSTGRESQL_REPLICATION_PASSWORD=password
       - POSTGRESQL_PASSWORD=password
     networks:
-      - hdised
+      - zbdihd
 
   database-replica:
-    image: 'bitnami/postgresql:latest'
+    image: 'bitnami/postgresql:16.0.0'
     container_name: database-replica
     ports:
       - "5433:5432"
@@ -54,7 +54,7 @@ services:
       - POSTGRESQL_REPLICATION_PASSWORD=password
       - POSTGRESQL_PASSWORD=password
     networks:
-      - hdised
+      - zbdihd
 
   zookeeper:
     container_name: zookeeper
@@ -64,7 +64,7 @@ services:
     env_file:
       - .env
     networks:
-      - hdised
+      - zbdihd
 
   kafka:
     container_name: kafka
@@ -76,18 +76,18 @@ services:
     depends_on:
       - zookeeper
     networks:
-      - hdised
+      - zbdihd
   pmm-monitoring:
     container_name: pmm-monitoring
     image: 'percona/pmm-server:2.41.2'
     ports:
       - '443:443'
     networks:
-      - hdised
+      - zbdihd
 
 volumes:
-  hdised:
+  zbdihd:
 
 networks:
-  hdised:
+  zbdihd:
     driver: bridge
