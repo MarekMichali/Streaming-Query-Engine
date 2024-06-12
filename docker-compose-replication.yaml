@@ -27,7 +27,7 @@ services:
       - zbdihd
 
   database:
-    image: 'bitnami/postgresql:16.0.0'
+    image: 'bitnami/postgresql:16.3.0'
     container_name: database
     ports:
       - "5432:5432"
@@ -40,7 +40,7 @@ services:
       - zbdihd
 
   database-replica:
-    image: 'bitnami/postgresql:16.0.0'
+    image: 'bitnami/postgresql:16.3.0'
     container_name: database-replica
     ports:
       - "5433:5432"
